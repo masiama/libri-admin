@@ -1,6 +1,6 @@
 <script setup lang="ts">
-const supabase = useSupabaseClient()
-const email = ref('')
+const supabase = useSupabaseClient();
+const email = ref("");
 const { origin } = useRequestURL();
 
 const signInWithOtp = async () => {
@@ -9,20 +9,14 @@ const signInWithOtp = async () => {
     email: email.value,
     options: {
       emailRedirectTo: `${origin}/confirm`,
-    }
-  })
-  if (error) console.log(error)
-}
-
+    },
+  });
+  if (error) console.log(error);
+};
 </script>
 <template>
   <div>
-    <button @click="signInWithOtp">
-      Sign In with E-Mail
-    </button>
-    <input
-      v-model="email"
-      type="email"
-    />
+    <button @click="signInWithOtp">Sign In with E-Mail</button>
+    <input v-model="email" type="email" />
   </div>
 </template>

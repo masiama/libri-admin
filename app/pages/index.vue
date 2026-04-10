@@ -1,36 +1,36 @@
 <script setup lang="ts">
-const supabase = useSupabaseClient()
-const user = useSupabaseUser()
-const session = useSupabaseSession()
-const config = useRuntimeConfig()
+const supabase = useSupabaseClient();
+const user = useSupabaseUser();
+const session = useSupabaseSession();
+const config = useRuntimeConfig();
 
 const logout = async () => {
-  const { error } = await supabase.auth.signOut()
-  if (error) console.log(error)
-}
+  const { error } = await supabase.auth.signOut();
+  if (error) console.log(error);
+};
 
 const startCrawlers = async () => {
   if (!session.value) {
-    alert('You must be logged in to start crawlers')
-    return
+    alert("You must be logged in to start crawlers");
+    return;
   }
 
   try {
     const response = await fetch(`${config.public.apiBase}/api/v1/admin/crawl`, {
-      method: 'POST',
+      method: "POST",
       headers: {
-        'Authorization': `Bearer ${session.value.access_token}`,
+        Authorization: `Bearer ${session.value.access_token}`,
       },
-    })
+    });
     if (!response.ok) {
-      throw new Error('Failed to start crawlers')
+      throw new Error("Failed to start crawlers");
     }
-    alert('Crawlers started successfully!')
+    alert("Crawlers started successfully!");
   } catch (error) {
-    console.error(error)
-    alert('Error starting crawlers')
+    console.error(error);
+    alert("Error starting crawlers");
   }
-}
+};
 </script>
 
 <template>
