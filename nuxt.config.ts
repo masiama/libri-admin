@@ -7,4 +7,9 @@ export default defineNuxtConfig({
   supabase: {
     types: false,
   },
+  runtimeConfig: {
+    public: {
+      apiBase: '',
+    },
+  },
 });
