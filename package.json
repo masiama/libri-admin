@@ -14,11 +14,11 @@
     "lint:fix": "oxlint --fix"
   },
   "dependencies": {
-    "@nuxt/ui": "^4.6.0",
+    "@nuxt/ui": "^4.6.1",
     "@nuxtjs/supabase": "2.0.5",
     "nuxt": "^4.4.2",
     "tailwindcss": "^4.2.2",
-    "vue": "^3.5.31",
+    "vue": "^3.5.32",
     "vue-router": "^5.0.4"
   },
   "devDependencies": {
