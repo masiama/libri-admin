@@ -1,46 +1,45 @@
 <script setup lang="ts">
-const supabase = useSupabaseClient();
-const user = useSupabaseUser();
-const session = useSupabaseSession();
+const { isSignedIn, getToken } = useAuth();
 const config = useRuntimeConfig();
-
-const logout = async () => {
-  const { error } = await supabase.auth.signOut();
-  if (error) console.log(error);
-};
+const toast = useToast();
 
 const startCrawlers = async () => {
-  if (!session.value) {
-    alert("You must be logged in to start crawlers");
+  const token = await getToken.value({ template: config.public.clerkJwtTemplate });
+  if (!token) {
+    toast.add({
+      title: "Authentication Error",
+      description: "You must be signed in to start the crawlers.",
+    });
     return;
   }
-
   try {
     const response = await fetch(`${config.public.apiBase}/api/v1/admin/crawl`, {
       method: "POST",
-      headers: {
-        Authorization: `Bearer ${session.value.access_token}`,
-      },
+      headers: { Authorization: `Bearer ${token}` },
     });
     if (!response.ok) {
       throw new Error("Failed to start crawlers");
     }
-    alert("Crawlers started successfully!");
+    toast.add({
+      title: "Success",
+      description: "Crawlers started successfully!",
+    });
   } catch (error) {
     console.error(error);
-    alert("Error starting crawlers");
+    toast.add({
+      title: "Error",
+      description: "An error occurred while starting the crawlers.",
+    });
   }
 };
 </script>
 
 <template>
-  <template v-if="user">
-    <div>Logged in as {{ user.email }}</div>
-    <button @click="logout">Logout</button>
-    <button @click="startCrawlers">Start Crawlers</button>
-  </template>
-  <template v-else>
-    <div>Not logged in</div>
-    <a href="/login">Log in</a>
-  </template>
+  <UDashboardPanel id="home">
+    <template #body v-if="isSignedIn">
+      <div>
+        <UButton @click="startCrawlers" label="Start Crawlers" leading-icon="i-lucide-play" />
+      </div>
+    </template>
+  </UDashboardPanel>
 </template>

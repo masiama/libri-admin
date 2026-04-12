@@ -2,14 +2,12 @@
 export default defineNuxtConfig({
   compatibilityDate: "2025-07-15",
   devtools: { enabled: true },
-  modules: ["@nuxt/ui", "@nuxtjs/supabase", "@nuxt/fonts"],
+  modules: ["@nuxt/ui", "@nuxt/fonts", "@clerk/nuxt"],
   css: ["~/assets/css/main.css"],
-  supabase: {
-    types: false,
-  },
   runtimeConfig: {
     public: {
       apiBase: "",
+      clerkJwtTemplate: "",
     },
   },
   typescript: {

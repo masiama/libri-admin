@@ -14,10 +14,10 @@
     "lint:fix": "oxlint --fix"
   },
   "dependencies": {
+    "@clerk/nuxt": "^2.1.2",
     "@iconify-json/lucide": "^1.2.102",
     "@nuxt/fonts": "0.14.0",
     "@nuxt/ui": "^4.6.1",
-    "@nuxtjs/supabase": "2.0.5",
     "nuxt": "^4.4.2",
     "tailwindcss": "^4.2.2",
     "vue": "^3.5.32",
