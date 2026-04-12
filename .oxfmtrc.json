@@ -3,5 +3,6 @@
   "ignorePatterns": [],
   "sortImports": true,
   "sortPackageJson": true,
-  "sortTailwindcss": true
+  "sortTailwindcss": true,
+  "htmlWhitespaceSensitivity": "ignore"
 }

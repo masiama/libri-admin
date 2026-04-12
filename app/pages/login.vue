@@ -15,8 +15,14 @@ const signInWithOtp = async () => {
 };
 </script>
 <template>
-  <div>
-    <button @click="signInWithOtp">Sign In with E-Mail</button>
-    <input v-model="email" type="email" />
-  </div>
+  <UContainer class="flex h-screen items-center justify-center">
+    <UForm class="flex flex-col space-y-4 rounded border border-white/20 bg-white/5 p-4">
+      <UFormField label="Email" name="email">
+        <UInput v-model="email" placeholder="Enter your email" />
+      </UFormField>
+      <UButton icon="i-lucide-user" variant="subtle" @click="signInWithOtp">
+        Sign In with E-Mail
+      </UButton>
+    </UForm>
+  </UContainer>
 </template>
