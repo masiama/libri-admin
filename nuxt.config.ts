@@ -12,4 +12,7 @@ export default defineNuxtConfig({
       apiBase: "",
     },
   },
+  typescript: {
+    typeCheck: true,
+  },
 });
