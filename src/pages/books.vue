@@ -1,5 +1,8 @@
 <script setup lang="ts">
 import type { TableColumn } from "@nuxt/ui";
+import { h, resolveComponent } from "vue";
+
+import { usePagination } from "@/composables/usePagination";
 
 type Book = {
   isbn: string;

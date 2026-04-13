@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { SignInButton, SignOutButton, useUser } from "@clerk/vue";
+
 defineProps<{ collapsed?: boolean }>();
 
 const { isLoaded, user } = useUser();

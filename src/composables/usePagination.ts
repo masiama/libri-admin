@@ -1,3 +1,6 @@
+import { useAuth } from "@clerk/vue";
+import { ref, shallowRef, watch } from "vue";
+
 type PaginatedResponse<T> = {
   content: T[];
   page: {
@@ -9,8 +12,7 @@ type PaginatedResponse<T> = {
 };
 
 export const usePagination = <T>(path: string) => {
-  const config = useRuntimeConfig();
-  const baseUrl = `${config.public.apiBase}/api/v1${path}`;
+  const baseUrl = `${import.meta.env.VITE_API_BASE}/api/v1${path}`;
 
   const { getToken } = useAuth();
 
@@ -23,7 +25,7 @@ export const usePagination = <T>(path: string) => {
   const fetchPaginatedData = async (url: string) => {
     isLoading.value = true;
     try {
-      const token = await getToken.value();
+      const token = await getToken.value({ template: import.meta.env.VITE_CLERK_JWT_TEMPLATE });
       if (!token) {
         throw new Error("Unauthorized");
       }

@@ -1,10 +1,11 @@
 <script setup lang="ts">
-const { getToken } = useAuth();
-const config = useRuntimeConfig();
+import { useAuth } from "@clerk/vue";
+
+const { isSignedIn, getToken } = useAuth();
 const toast = useToast();
 
 const startCrawlers = async () => {
-  const token = await getToken.value({ template: config.public.clerkJwtTemplate });
+  const token = await getToken.value({ template: import.meta.env.VITE_CLERK_TOKEN_TEMPLATE });
   if (!token) {
     toast.add({
       title: "Authentication Error",
@@ -13,7 +14,7 @@ const startCrawlers = async () => {
     return;
   }
   try {
-    const response = await fetch(`${config.public.apiBase}/api/v1/admin/crawl`, {
+    const response = await fetch(`${import.meta.env.VITE_API_BASE}/api/v1/admin/crawl`, {
       method: "POST",
       headers: { Authorization: `Bearer ${token}` },
     });

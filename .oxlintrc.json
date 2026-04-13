@@ -9,7 +9,6 @@
     "builtin": true
   },
   "options": {
-    "typeAware": true,
-    "typeCheck": true
+    "typeAware": true
   }
 }
