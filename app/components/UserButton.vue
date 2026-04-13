@@ -22,7 +22,7 @@ const { isLoaded, user } = useUser();
     <USkeleton class="h-3.5 max-w-25 grow" />
     <USkeleton class="ml-auto size-4 shrink-0 rounded-md" />
   </div>
-  <SignInButton v-else>
+  <SignInButton v-else mode="modal">
     <UButton
       label="Sign In"
       color="neutral"
