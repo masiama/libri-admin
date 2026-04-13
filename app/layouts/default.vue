@@ -3,7 +3,10 @@ import type { NavigationMenuItem } from "@nuxt/ui";
 
 const { isSignedIn } = useAuth();
 
-const links: NavigationMenuItem[] = [{ label: "Home", icon: "i-lucide-house", to: "/" }];
+const links: NavigationMenuItem[] = [
+  { label: "Home", icon: "i-lucide-house", to: "/" },
+  { label: "Books", icon: "i-lucide-book", to: "/books" },
+];
 </script>
 
 <template>
