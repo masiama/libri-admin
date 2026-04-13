@@ -4,7 +4,7 @@ import type { NavigationMenuItem } from "@nuxt/ui";
 
 import UserButton from "./components/UserButton.vue";
 
-const { isSignedIn } = useAuth();
+const { isLoaded, isSignedIn } = useAuth();
 
 const links: NavigationMenuItem[] = [
   { label: "Home", icon: "i-lucide-house", to: "/" },
@@ -51,7 +51,8 @@ const links: NavigationMenuItem[] = [
         </template>
       </UDashboardSidebar>
 
-      <RouterView v-if="isSignedIn" />
+      <div v-if="!isLoaded" />
+      <RouterView v-else-if="isSignedIn" />
       <UDashboardPanel v-else :ui="{ body: 'justify-center' }">
         <template #body>
           <UPageSection

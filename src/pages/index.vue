@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { useAuth } from "@clerk/vue";
 
-const { isSignedIn, getToken } = useAuth();
+const { getToken } = useAuth();
 const toast = useToast();
 
 const startCrawlers = async () => {
