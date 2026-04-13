@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import type { NavigationMenuItem } from "@nuxt/ui";
 
+const { isSignedIn } = useAuth();
+
 const links: NavigationMenuItem[] = [{ label: "Home", icon: "i-lucide-house", to: "/" }];
 </script>
 
@@ -42,6 +44,14 @@ const links: NavigationMenuItem[] = [{ label: "Home", icon: "i-lucide-house", to
       </template>
     </UDashboardSidebar>
 
-    <slot />
+    <slot v-if="isSignedIn" />
+    <UDashboardPanel v-else :ui="{ body: 'justify-center' }">
+      <template #body>
+        <UPageSection
+          title="Welcome to Libri Admin"
+          description="Please sign in to access the dashboard."
+        />
+      </template>
+    </UDashboardPanel>
   </UDashboardGroup>
 </template>

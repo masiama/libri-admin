@@ -1,5 +1,5 @@
 <script setup lang="ts">
-const { isSignedIn, getToken } = useAuth();
+const { getToken } = useAuth();
 const config = useRuntimeConfig();
 const toast = useToast();
 
@@ -36,7 +36,7 @@ const startCrawlers = async () => {
 
 <template>
   <UDashboardPanel id="home">
-    <template #body v-if="isSignedIn">
+    <template #body>
       <div>
         <UButton @click="startCrawlers" label="Start Crawlers" leading-icon="i-lucide-play" />
       </div>
