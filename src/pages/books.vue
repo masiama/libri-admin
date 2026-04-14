@@ -1,7 +1,9 @@
 <script setup lang="ts">
-import type { TableColumn } from "@nuxt/ui";
-import { h, resolveComponent } from "vue";
+import type { DropdownMenuItem, TableColumn } from "@nuxt/ui";
+import type { Row, SortingState } from "@tanstack/table-core";
+import { h, ref, resolveComponent } from "vue";
 
+import SortableColumnHeader from "@/components/SortableColumnHeader.vue";
 import { usePagination } from "@/composables/usePagination";
 
 type Book = {
@@ -14,11 +16,16 @@ type Book = {
 
 const UButton = resolveComponent("UButton");
 
-const { page, data, isLoading } = usePagination<Book>("/books");
+const sorting = ref<SortingState>([]);
+
+const { page, data, isLoading } = usePagination<Book>("/books", sorting);
 
 const columns: TableColumn<Book>[] = [
   { accessorKey: "isbn", header: "ISBN", meta: { class: { td: "w-30" } } },
-  { accessorKey: "title", header: "Title" },
+  {
+    accessorKey: "title",
+    header: ({ column }) => h(SortableColumnHeader, { column, label: "Title" }),
+  },
   {
     id: "actions",
     meta: { class: { td: "w-16" } },
@@ -39,9 +46,11 @@ const columns: TableColumn<Book>[] = [
     <template #body>
       <UTable
         sticky
-        :loading="isLoading"
         :data="data?.content"
         :columns="columns"
+        :loading="isLoading"
+        v-model:sorting="sorting"
+        :sorting-options="{ manualSorting: true }"
         class="flex-1 overscroll-none"
       />
       <div class="border-default flex justify-end border-t px-4 pt-4">

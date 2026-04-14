@@ -1,5 +1,6 @@
 import { useAuth } from "@clerk/vue";
-import { ref, shallowRef, watch } from "vue";
+import type { SortingState } from "@tanstack/table-core";
+import { ref, shallowRef, watch, type Ref } from "vue";
 
 type PaginatedResponse<T> = {
   content: T[];
@@ -11,7 +12,7 @@ type PaginatedResponse<T> = {
   };
 };
 
-export const usePagination = <T>(path: string) => {
+export const usePagination = <T>(path: string, sorting?: Ref<SortingState>) => {
   const baseUrl = `${import.meta.env.VITE_API_BASE}/api/v1${path}`;
 
   const { getToken } = useAuth();
@@ -47,7 +48,20 @@ export const usePagination = <T>(path: string) => {
     }
   };
 
-  watch(page, (newValue) => fetchPaginatedData(`${baseUrl}?page=${newValue}`), { immediate: true });
+  watch(
+    [page, () => sorting?.value[0]],
+    ([newPage, newSorting]) => {
+      const url = new URL(`${baseUrl}`);
+
+      url.searchParams.append("page", newPage.toString());
+      if (newSorting) {
+        url.searchParams.append("sort", `${newSorting.id},${newSorting.desc ? "desc" : "asc"}`);
+      }
+
+      return fetchPaginatedData(url.toString());
+    },
+    { immediate: true },
+  );
 
   return { page, limit, isLoading, data };
 };
