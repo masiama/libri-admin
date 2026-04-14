@@ -52,6 +52,14 @@ const columns: TableColumn<Book>[] = [
 
 <template>
   <UDashboardPanel id="books">
+    <template #header>
+      <UDashboardNavbar title="Books">
+        <template #leading>
+          <UDashboardSidebarCollapse />
+        </template>
+      </UDashboardNavbar>
+    </template>
+
     <template #body>
       <UTable
         sticky
