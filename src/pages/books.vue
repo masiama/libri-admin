@@ -16,10 +16,16 @@ type Book = {
 
 const UButton = resolveComponent("UButton");
 const UBadge = resolveComponent("UBadge");
+const UDropdownMenu = resolveComponent("UDropdownMenu");
 
 const sorting = ref<SortingState>([]);
 
 const { page, data, isLoading } = usePagination<Book>("/books", sorting);
+
+const getRowItems = (row: Row<Book>): DropdownMenuItem[] => [
+  { type: "label", label: "Actions" },
+  { label: "View on source", icon: "i-lucide-store", to: row.original.url, target: "_blank" },
+];
 
 const columns: TableColumn<Book>[] = [
   { accessorKey: "isbn", header: "ISBN", meta: { class: { th: "w-36" } } },
@@ -39,13 +45,18 @@ const columns: TableColumn<Book>[] = [
     id: "actions",
     meta: { class: { th: "w-16" } },
     cell: ({ row }) =>
-      h(UButton, {
-        icon: "i-lucide-external-link",
-        color: "neutral",
-        variant: "ghost",
-        to: row.original.url,
-        target: "_blank",
-      }),
+      h(
+        "div",
+        { class: "text-right" },
+        h(UDropdownMenu, { content: { align: "end" }, items: getRowItems(row) }, () =>
+          h(UButton, {
+            icon: "i-lucide-ellipsis-vertical",
+            color: "neutral",
+            variant: "ghost",
+            class: "ml-auto",
+          }),
+        ),
+      ),
   },
 ];
 </script>
