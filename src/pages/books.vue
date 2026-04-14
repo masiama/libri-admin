@@ -15,6 +15,7 @@ type Book = {
 };
 
 const UButton = resolveComponent("UButton");
+const UBadge = resolveComponent("UBadge");
 
 const sorting = ref<SortingState>([]);
 
@@ -22,6 +23,12 @@ const { page, data, isLoading } = usePagination<Book>("/books", sorting);
 
 const columns: TableColumn<Book>[] = [
   { accessorKey: "isbn", header: "ISBN", meta: { class: { td: "w-30" } } },
+  {
+    accessorKey: "sourceName",
+    header: ({ column }) => h(SortableColumnHeader, { column, label: "Source" }),
+    cell: ({ row }) =>
+      h(UBadge, { variant: "subtle", color: "neutral" }, () => row.getValue("sourceName")),
+  },
   {
     accessorKey: "title",
     header: ({ column }) => h(SortableColumnHeader, { column, label: "Title" }),
