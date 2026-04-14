@@ -22,20 +22,22 @@ const sorting = ref<SortingState>([]);
 const { page, data, isLoading } = usePagination<Book>("/books", sorting);
 
 const columns: TableColumn<Book>[] = [
-  { accessorKey: "isbn", header: "ISBN", meta: { class: { td: "w-30" } } },
+  { accessorKey: "isbn", header: "ISBN", meta: { class: { th: "w-36" } } },
   {
     accessorKey: "sourceName",
     header: ({ column }) => h(SortableColumnHeader, { column, label: "Source" }),
     cell: ({ row }) =>
       h(UBadge, { variant: "subtle", color: "neutral" }, () => row.getValue("sourceName")),
+    meta: { class: { th: "w-36" } },
   },
   {
     accessorKey: "title",
     header: ({ column }) => h(SortableColumnHeader, { column, label: "Title" }),
+    meta: { class: { td: "truncate" } },
   },
   {
     id: "actions",
-    meta: { class: { td: "w-16" } },
+    meta: { class: { th: "w-16" } },
     cell: ({ row }) =>
       h(UButton, {
         icon: "i-lucide-external-link",
@@ -58,9 +60,16 @@ const columns: TableColumn<Book>[] = [
         :loading="isLoading"
         v-model:sorting="sorting"
         :sorting-options="{ manualSorting: true }"
-        class="flex-1 overscroll-none"
+        class="border-default flex-1 overscroll-none border-b"
+        :ui="{
+          base: 'table-fixed border-separate border-spacing-0 w-full',
+          tbody: '[&>tr]:last:[&>td]:border-b-0',
+          th: 'bg-elevated/50 py-2 first:rounded-l-lg last:rounded-r-lg border-y border-default first:border-l last:border-r',
+          td: 'border-b border-default py-2',
+          separator: 'h-0',
+        }"
       />
-      <div class="border-default flex justify-end border-t px-4 pt-4">
+      <div class="flex justify-end">
         <UPagination v-model:page="page" :total="data?.page.totalPages" />
       </div>
     </template>
