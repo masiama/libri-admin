@@ -113,7 +113,11 @@ defineShortcuts({ "/": () => filterRef.value?.inputRef?.focus() });
         }"
       />
       <div class="flex justify-end">
-        <UPagination v-model:page="page" :total="data?.page.totalPages" />
+        <UPagination
+          v-model:page="page"
+          :total="data?.page.totalElements"
+          :items-per-page="data?.page.size"
+        />
       </div>
     </template>
   </UDashboardPanel>
