@@ -12,7 +12,12 @@ type PaginatedResponse<T> = {
   };
 };
 
-export const usePagination = <T>(path: string, sorting?: Ref<SortingState>) => {
+type Options = {
+  sorting?: Ref<SortingState>;
+  filter?: Ref<string>;
+};
+
+export const usePagination = <T>(path: string, options: Options = {}) => {
   const baseUrl = `${import.meta.env.VITE_API_BASE}/api/v1${path}`;
 
   const { getToken } = useAuth();
@@ -49,13 +54,16 @@ export const usePagination = <T>(path: string, sorting?: Ref<SortingState>) => {
   };
 
   watch(
-    [page, () => sorting?.value[0]],
-    ([newPage, newSorting]) => {
+    [page, () => options.sorting?.value[0], () => options.filter?.value],
+    ([newPage, newSorting, newFilter]) => {
       const url = new URL(`${baseUrl}`);
 
-      url.searchParams.append("page", newPage.toString());
+      url.searchParams.append("page", `${newPage - 1}`);
       if (newSorting) {
         url.searchParams.append("sort", `${newSorting.id},${newSorting.desc ? "desc" : "asc"}`);
+      }
+      if (newFilter) {
+        url.searchParams.append("filter", newFilter);
       }
 
       return fetchPaginatedData(url.toString());

@@ -1,7 +1,8 @@
 <script setup lang="ts">
 import type { DropdownMenuItem, TableColumn } from "@nuxt/ui";
 import type { Row, SortingState } from "@tanstack/table-core";
-import { h, ref, resolveComponent } from "vue";
+import { refDebounced } from "@vueuse/core";
+import { h, ref, resolveComponent, useTemplateRef } from "vue";
 
 import SortableColumnHeader from "@/components/SortableColumnHeader.vue";
 import { usePagination } from "@/composables/usePagination";
@@ -18,9 +19,16 @@ const UButton = resolveComponent("UButton");
 const UBadge = resolveComponent("UBadge");
 const UDropdownMenu = resolveComponent("UDropdownMenu");
 
+const filterRef = useTemplateRef("filter");
+const filter = ref("");
+const debouncedFilter = refDebounced(filter, 300);
+
 const sorting = ref<SortingState>([]);
 
-const { page, data, isLoading } = usePagination<Book>("/books", sorting);
+const { page, data, isLoading } = usePagination<Book>("/books", {
+  filter: debouncedFilter,
+  sorting,
+});
 
 const getRowItems = (row: Row<Book>): DropdownMenuItem[] => [
   { type: "label", label: "Actions" },
@@ -59,6 +67,8 @@ const columns: TableColumn<Book>[] = [
       ),
   },
 ];
+
+defineShortcuts({ "/": () => filterRef.value?.inputRef?.focus() });
 </script>
 
 <template>
@@ -67,6 +77,20 @@ const columns: TableColumn<Book>[] = [
       <UDashboardNavbar title="Books">
         <template #leading>
           <UDashboardSidebarCollapse />
+        </template>
+
+        <template #right>
+          <UInput
+            ref="filter"
+            v-model="filter"
+            class="max-w-sm"
+            icon="i-lucide-search"
+            placeholder="Filter books..."
+          >
+            <template #trailing>
+              <UKbd value="/" />
+            </template>
+          </UInput>
         </template>
       </UDashboardNavbar>
     </template>
