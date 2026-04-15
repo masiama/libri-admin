@@ -2,6 +2,7 @@
 import { useAuth } from "@clerk/vue";
 import type { NavigationMenuItem } from "@nuxt/ui";
 
+import Logo from "./assets/logo.svg?component";
 import UserButton from "./components/UserButton.vue";
 
 const { isLoaded, isSignedIn } = useAuth();
@@ -24,16 +25,12 @@ const links: NavigationMenuItem[] = [
         :min-size="12"
       >
         <template #header="{ collapsed }">
-          <UButton
-            to="/"
-            :label="collapsed ? undefined : 'Libri Admin'"
-            color="neutral"
-            variant="ghost"
-            icon="i-lucide-book"
-            :square="collapsed"
-            block
-            :ui="{ base: 'justify-start' }"
-          />
+          <RouterLink to="/" class="w-full">
+            <div :class="['flex items-center gap-2', collapsed ? 'px-1' : 'px-2.5']">
+              <Logo class="text-primary h-6 w-6" />
+              <span v-if="!collapsed" class="text-lg font-semibold">Libri Admin</span>
+            </div>
+          </RouterLink>
         </template>
 
         <template #default="{ collapsed }">
