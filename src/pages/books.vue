@@ -25,7 +25,7 @@ const debouncedFilter = refDebounced(filter, 300);
 
 const sorting = ref<SortingState>([]);
 
-const { page, data, isLoading } = usePagination<Book>("/books", {
+const { page, data, isFetching } = usePagination<Book>("/books", {
   filter: debouncedFilter,
   sorting,
 });
@@ -100,7 +100,7 @@ defineShortcuts({ "/": () => filterRef.value?.inputRef?.focus() });
         sticky
         :data="data?.content"
         :columns="columns"
-        :loading="isLoading"
+        :loading="isFetching"
         v-model:sorting="sorting"
         :sorting-options="{ manualSorting: true }"
         class="border-default flex-1 overscroll-none border-b"
