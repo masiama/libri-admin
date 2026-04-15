@@ -1,31 +1,41 @@
 <script setup lang="ts">
 import { SignInButton, useAuth, UserButton } from "@clerk/vue";
-import type { TableColumn } from "@nuxt/ui";
+import type { FormSubmitEvent, TableColumn } from "@nuxt/ui";
 import type { SortingState } from "@tanstack/table-core";
 import { refDebounced } from "@vueuse/core";
-import { h, ref, resolveComponent, useTemplateRef, watch } from "vue";
+import { computed, ref, resolveComponent, useTemplateRef, watch } from "vue";
+import * as z from "zod";
 
 import Logo from "@/assets/logo.svg?component";
 
 import SortableColumnHeader from "./components/SortableColumnHeader.vue";
-import { useFetch } from "./composables/useFetch";
+import { useAuthedFetch, useFetch } from "./composables/useFetch";
 import { usePagination } from "./composables/usePagination";
 
-type Book = {
-  isbn: string;
-  title: string;
-  authors: string[];
-  url: string;
-  sourceName: string;
+const BASE_URL = import.meta.env.VITE_API_BASE;
+
+type Source = {
+  name: string;
+  priority: number;
+  enabled: boolean;
 };
+
+const BookSchema = z.object({
+  isbn: z.string(),
+  title: z.string(),
+  authors: z.array(z.string()),
+  url: z.url(),
+  sourceName: z.string(),
+});
+type Book = z.infer<typeof BookSchema>;
 
 const { isSignedIn } = useAuth();
 const toast = useToast();
 
-const { execute } = useFetch()("/admin/crawl", { immediate: false }).post();
+const fetch = useAuthedFetch();
 
 const startCrawlers = () =>
-  execute(true)
+  fetch("/admin/crawl", { method: "POST" })
     .then(() => {
       toast.add({ title: "Success", description: "Crawlers started successfully!" });
     })
@@ -50,10 +60,16 @@ const {
   data,
   isFetching,
   error: booksError,
+  execute: refetchBooks,
 } = usePagination<Book>("/books", { filter: debouncedFilter, sorting });
 
+const { data: sources, error: sourcesError } = useFetch()("/sources").get().json<Source[]>();
+const sourceOptions = computed(
+  () => sources.value?.map((s) => ({ label: s.name, value: s.name })) ?? [],
+);
+
 watch(booksError, (error) => {
-  if (error) {
+  if (error && error.name !== "AbortError") {
     toast.add({
       title: "Error",
       description: "An error occurred while fetching books.",
@@ -64,37 +80,66 @@ watch(booksError, (error) => {
   }
 });
 
+watch(sourcesError, (error) => {
+  if (error && error.name !== "AbortError") {
+    toast.add({
+      title: "Error",
+      description: "An error occurred while fetching sources.",
+      color: "error",
+      icon: "i-lucide-triangle-alert",
+    });
+    console.error(error);
+  }
+});
+
 const columns: TableColumn<Book>[] = [
   { accessorKey: "isbn", header: "ISBN", meta: { class: { th: "w-36" } } },
-  {
-    accessorKey: "sourceName",
-    header: ({ column }) => h(SortableColumnHeader, { column, label: "Source" }),
-    cell: ({ row }) =>
-      h(UBadge, { variant: "subtle", color: "neutral" }, () => row.getValue("sourceName")),
-    meta: { class: { th: "w-36" } },
-  },
-  {
-    accessorKey: "title",
-    header: ({ column }) => h(SortableColumnHeader, { column, label: "Title" }),
-    meta: { class: { td: "truncate" } },
-  },
-  {
-    id: "actions",
-    meta: { class: { th: "w-16" } },
-    cell: ({ row }) =>
-      h(
-        "div",
-        { class: "text-right" },
-        h(UButton, {
-          icon: "i-lucide-store",
-          to: row.original.url,
-          target: "_blank",
-          color: "default",
-          variant: "ghost",
-        }),
-      ),
-  },
+  { accessorKey: "sourceName", meta: { class: { th: "w-36" } } },
+  { accessorKey: "title", meta: { class: { td: "truncate" } } },
+  { id: "actions", meta: { class: { th: "w-32" } } },
 ];
+
+const submitting = ref(false);
+const editingBook = ref<Book>();
+const editingBookImage = ref<File>();
+
+watch(editingBook, () => (editingBookImage.value = undefined));
+
+const createObjectUrl = (file: File) => URL.createObjectURL(file);
+
+const onSubmit = (event: FormSubmitEvent<Book>) => {
+  submitting.value = true;
+  const formData = new FormData();
+
+  formData.append("book", new Blob([JSON.stringify(event.data)], { type: "application/json" }));
+
+  if (editingBookImage.value) {
+    formData.append("file", editingBookImage.value);
+  }
+
+  return fetch(`/books/${event.data.isbn}`, { method: "PUT", body: formData })
+    .then((response) => response.json())
+    .then(refetchBooks)
+    .then(() => {
+      editingBook.value = undefined;
+      toast.add({
+        title: "Success",
+        description: "Book updated successfully!",
+        color: "success",
+        icon: "i-lucide-check",
+      });
+    })
+    .catch((error) => {
+      console.error(error);
+      toast.add({
+        title: "Error",
+        description: "An error occurred while updating the book.",
+        color: "error",
+        icon: "i-lucide-triangle-alert",
+      });
+    })
+    .finally(() => (submitting.value = false));
+};
 </script>
 
 <template>
@@ -144,7 +189,102 @@ const columns: TableColumn<Book>[] = [
           td: 'border-b border-default py-2',
           separator: 'h-0',
         }"
-      />
+      >
+        <template #sourceName-header="{ column }">
+          <SortableColumnHeader :column="column" label="Source" />
+        </template>
+
+        <template #title-header="{ column }">
+          <SortableColumnHeader :column="column" label="Title" />
+        </template>
+
+        <template #sourceName-cell="{ row }">
+          <UBadge variant="subtle" color="neutral">{{ row.getValue("sourceName") }}</UBadge>
+        </template>
+
+        <template #actions-cell="{ row }">
+          <div class="flex gap-2">
+            <USlideover
+              :open="editingBook?.isbn === row.original.isbn"
+              @update:open="editingBook = $event ? row.original : undefined"
+            >
+              <UButton
+                icon="i-lucide-pencil"
+                square
+                color="neutral"
+                variant="ghost"
+                @click="editingBook = row.original"
+              />
+
+              <template #title>Edit Book</template>
+
+              <template #body>
+                <UForm
+                  v-if="editingBook"
+                  id="edit-form"
+                  :schema="BookSchema"
+                  :state="editingBook"
+                  class="space-y-4"
+                  @submit="onSubmit"
+                >
+                  <UFormField>
+                    <UFileUpload v-slot="{ open }" v-model="editingBookImage" accept="image/jpeg">
+                      <UCard class="flex h-50" :ui="{ body: 'sm:p-2 p-2' }">
+                        <img
+                          :src="
+                            editingBookImage
+                              ? createObjectUrl(editingBookImage)
+                              : `${BASE_URL}/api/v1/images/${editingBook.isbn}.jpg`
+                          "
+                          alt="Book Cover"
+                          class="h-full w-full cursor-pointer object-contain"
+                          @click="open()"
+                        />
+                      </UCard>
+                    </UFileUpload>
+                  </UFormField>
+
+                  <UFormField label="ISBN" name="isbn">
+                    <UInput v-model="editingBook.isbn" disabled class="w-full" />
+                  </UFormField>
+
+                  <UFormField label="Title" name="title" required>
+                    <UInput v-model="editingBook.title" class="w-full" />
+                  </UFormField>
+
+                  <UFormField label="Authors" name="authors">
+                    <UInputTags v-model="editingBook.authors" class="w-full" />
+                  </UFormField>
+
+                  <UFormField label="URL" name="url" required>
+                    <UInput v-model="editingBook.url" class="w-full" />
+                  </UFormField>
+
+                  <UFormField label="Source" name="source" required>
+                    <USelect
+                      v-model="editingBook.sourceName"
+                      :items="sourceOptions"
+                      class="w-full"
+                    />
+                  </UFormField>
+                </UForm>
+              </template>
+
+              <template #footer>
+                <UButton type="submit" form="edit-form" :loading="submitting">Submit</UButton>
+              </template>
+            </USlideover>
+            <UButton
+              icon="i-lucide-external-link"
+              :to="row.original.url"
+              target="_blank"
+              square
+              color="neutral"
+              variant="ghost"
+            />
+          </div>
+        </template>
+      </UTable>
 
       <div class="border-default flex justify-end border-t px-4 py-2" v-if="data">
         <UPagination

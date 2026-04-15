@@ -1,9 +1,7 @@
 <script setup lang="ts">
 import type { Column } from "@tanstack/table-core";
 
-const props = defineProps<{ column: Column<any>; label: string }>();
-
-const isSorted = props.column.getIsSorted();
+defineProps<{ column: Column<any>; label: string }>();
 </script>
 
 <template>
@@ -12,8 +10,8 @@ const isSorted = props.column.getIsSorted();
     variant="ghost"
     :label="label"
     :icon="
-      isSorted
-        ? isSorted === 'asc'
+      column.getIsSorted()
+        ? column.getIsSorted() === 'asc'
           ? 'i-lucide-arrow-up-narrow-wide'
           : 'i-lucide-arrow-down-wide-narrow'
         : 'i-lucide-arrow-up-down'

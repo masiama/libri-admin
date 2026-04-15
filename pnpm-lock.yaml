@@ -26,6 +26,9 @@ importers:
       vue:
         specifier: ^3.5.32
         version: 3.5.32(typescript@6.0.2)
+      zod:
+        specifier: ^4.3.6
+        version: 4.3.6
     devDependencies:
       '@tsconfig/node24':
         specifier: ^24.0.4
@@ -5442,5 +5445,4 @@ snapshots:
     dependencies:
       lib0: 0.2.117
 
-  zod@4.3.6:
-    optional: true
+  zod@4.3.6: {}
