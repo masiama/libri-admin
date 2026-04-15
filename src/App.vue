@@ -13,6 +13,7 @@ import { useAuthedFetch, useFetch } from "./composables/useFetch";
 import { usePagination } from "./composables/usePagination";
 
 const BASE_URL = import.meta.env.VITE_API_BASE;
+const CRAWL_START_ERROR_MESSAGE = "An error occurred while starting the crawlers.";
 
 type Source = {
   name: string;
@@ -36,12 +37,20 @@ const fetch = useAuthedFetch();
 
 const startCrawlers = () =>
   fetch("/admin/crawl", { method: "POST" })
-    .then(() => {
+    .then(async (response) => {
+      if (!response.ok) {
+        const message = await response.text();
+        throw new Error(message || CRAWL_START_ERROR_MESSAGE);
+      }
+
       toast.add({ title: "Success", description: "Crawlers started successfully!" });
     })
     .catch((error) => {
       console.error(error);
-      toast.add({ title: "Error", description: "An error occurred while starting the crawlers." });
+      toast.add({
+        title: "Error",
+        description: error instanceof Error ? error.message : CRAWL_START_ERROR_MESSAGE,
+      });
     });
 
 const UButton = resolveComponent("UButton");
