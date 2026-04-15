@@ -1,75 +1,75 @@
-# Nuxt Minimal Starter
+# Libri Admin
 
-Look at the [Nuxt documentation](https://nuxt.com/docs/getting-started/introduction) to learn more.
+Admin panel for managing the Libri catalog and triggering crawler runs.
 
-## Setup
+Built with Vue 3, Vite, TypeScript, Clerk authentication, and Nuxt UI.
 
-Make sure to install dependencies:
+## Features
+
+- Browse books with pagination, filtering, and sorting
+- Edit book metadata and cover images
+- Trigger crawler runs from the admin UI
+- Protect admin access with Clerk-issued JWTs
+
+## Requirements
+
+- Node.js 20+
+- pnpm
+- A running [`libri-api`](https://github.com/masiama/libri-api) instance
+- A Clerk application with a publishable key and JWT template
+
+## Environment variables
+
+Create a local env file from the example:
 
 ```bash
-# npm
-npm install
+cp .env.example .env
+```
 
-# pnpm
+Available variables:
+
+```bash
+VITE_CLERK_PUBLISHABLE_KEY=pk_***
+VITE_CLERK_JWT_TEMPLATE=jwt-admin
+VITE_API_BASE=http://localhost:8080
+```
+
+Notes:
+
+- `VITE_API_BASE` should point to the host running [`libri-api`](https://github.com/masiama/libri-api)
+- `VITE_CLERK_JWT_TEMPLATE` must match the Clerk JWT template expected by the API
+
+## Getting started
+
+Install dependencies:
+
+```bash
 pnpm install
-
-# yarn
-yarn install
-
-# bun
-bun install
 ```
 
-## Development Server
-
-Start the development server on `http://localhost:3000`:
+Start the development server:
 
 ```bash
-# npm
-npm run dev
-
-# pnpm
 pnpm dev
-
-# yarn
-yarn dev
-
-# bun
-bun run dev
 ```
 
-## Production
+The app runs on [http://localhost:3000](http://localhost:3000).
 
-Build the application for production:
+## Authentication
 
-```bash
-# npm
-npm run build
+`libri-admin` authenticates users with Clerk and sends a Bearer token to
+[`libri-api`](https://github.com/masiama/libri-api).
 
-# pnpm
-pnpm build
+To access admin endpoints successfully:
 
-# yarn
-yarn build
+- the API must trust your Clerk JWKS URL
+- the JWT template used by the admin must match the one expected by the API
+- the signed-in user must have `is_admin: true`
 
-# bun
-bun run build
+Example Clerk public metadata:
+
+```json
+{
+  "is_admin": true
+}
 ```
-
-Locally preview production build:
-
-```bash
-# npm
-npm run preview
-
-# pnpm
-pnpm preview
-
-# yarn
-yarn preview
-
-# bun
-bun run preview
-```
-
-Check out the [deployment documentation](https://nuxt.com/docs/getting-started/deployment) for more information.
