@@ -105,6 +105,12 @@ const editingBookImage = ref<File>();
 
 watch(editingBook, () => (editingBookImage.value = undefined));
 
+const cloneBook = (book: Book): Book => ({ ...book, authors: [...book.authors] });
+
+const startEditingBook = (book: Book) => {
+  editingBook.value = cloneBook(book);
+};
+
 const createObjectUrl = (file: File) => URL.createObjectURL(file);
 
 const onSubmit = (event: FormSubmitEvent<Book>) => {
@@ -206,14 +212,14 @@ const onSubmit = (event: FormSubmitEvent<Book>) => {
           <div class="flex gap-2">
             <USlideover
               :open="editingBook?.isbn === row.original.isbn"
-              @update:open="editingBook = $event ? row.original : undefined"
+              @update:open="editingBook = $event ? editingBook : undefined"
             >
               <UButton
                 icon="i-lucide-pencil"
                 square
                 color="neutral"
                 variant="ghost"
-                @click="editingBook = row.original"
+                @click="startEditingBook(row.original)"
               />
 
               <template #title>Edit Book</template>
