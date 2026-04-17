@@ -301,7 +301,10 @@ const onSubmit = (event: FormSubmitEvent<Book>) => {
         </template>
       </UTable>
 
-      <div class="border-default flex justify-end border-t px-4 py-2" v-if="data">
+      <div class="border-default flex items-center justify-between border-t px-4 py-2" v-if="data">
+        <div class="text-default/50 text-xs">
+          Copyright © {{ new Date().getFullYear() }} Leonid Cupikov
+        </div>
         <UPagination
           v-model:page="page"
           :total="data?.page.totalElements"
