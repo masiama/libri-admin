@@ -6,6 +6,8 @@ import { useAuthedFetch } from "@/composables/useFetch";
 import { cloneBook, showErrorToast, showSuccessToast } from "@/utils";
 import { type Book } from "@/utils/types";
 
+const BOOK_UPDATE_ERROR_MESSAGE = "An error occurred while updating the book.";
+
 const props = defineProps<{ book: Book; sourceOptions: string[] }>();
 const emit = defineEmits<{ (e: "refetchBooks"): Promise<void> }>();
 
@@ -29,17 +31,21 @@ const onSubmit = (event: FormSubmitEvent<Book>) => {
   }
 
   fetch(`/books/${event.data.isbn}`, { method: "PUT", body: formData })
-    .then(() => emit("refetchBooks"))
+    .then(async (response) => {
+      if (!response.ok) {
+        const message = await response.text();
+        throw new Error(message || BOOK_UPDATE_ERROR_MESSAGE);
+      }
+
+      return emit("refetchBooks");
+    })
     .then(() => {
       editingBook.value = undefined;
       showSuccessToast(toast, "Book updated successfully!");
     })
     .catch((error) => {
       console.error(error);
-      showErrorToast(
-        toast,
-        error instanceof Error ? error.message : "An error occurred while updating the book.",
-      );
+      showErrorToast(toast, error instanceof Error ? error.message : BOOK_UPDATE_ERROR_MESSAGE);
     })
     .finally(() => (submitting.value = false));
 };
