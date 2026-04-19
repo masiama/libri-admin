@@ -7,6 +7,14 @@ export const getBookImageUrl = (book: Book) =>
 
 export const cloneBook = (book: Book): Book => ({ ...book, authors: [...book.authors] });
 
+export const createEmptyBook = (): Book => ({
+  isbn: "",
+  title: "",
+  authors: [],
+  url: "",
+  sourceName: "",
+});
+
 export const showErrorToast = (toast: ReturnType<typeof useToast>, description: string) =>
   toast.add({ title: "Error", description, color: "error", icon: "i-lucide-triangle-alert" });
 export const showSuccessToast = (toast: ReturnType<typeof useToast>, description: string) =>

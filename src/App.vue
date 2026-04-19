@@ -56,7 +56,7 @@ const columns: TableColumn<Book>[] = [
 <template>
   <UApp :toaster="{ progress: false }">
     <div class="flex h-screen w-screen flex-col overflow-hidden">
-      <Header />
+      <Header :source-options="sourceOptions" @refetchBooks="refetchBooks" />
 
       <UTable
         sticky

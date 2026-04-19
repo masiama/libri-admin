@@ -7,10 +7,10 @@ export type Source = {
 };
 
 export const BookSchema = z.object({
-  isbn: z.string(),
-  title: z.string(),
-  authors: z.array(z.string()),
+  isbn: z.string().nonempty("ISBN is required"),
+  title: z.string().nonempty("Title is required"),
+  authors: z.array(z.string().nonempty()),
   url: z.url(),
-  sourceName: z.string(),
+  sourceName: z.string().nonempty("Source is required"),
 });
 export type Book = z.infer<typeof BookSchema>;

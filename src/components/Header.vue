@@ -3,11 +3,15 @@ import { SignInButton, useAuth, UserButton } from "@clerk/vue";
 import { useTemplateRef } from "vue";
 
 import Logo from "@/assets/logo.svg?component";
+import BookUpsertSlideover from "@/components/BookUpsertSlideover.vue";
 import { useAuthedFetch } from "@/composables/useFetch";
 import { store } from "@/store";
 import { showErrorToast, showSuccessToast } from "@/utils";
 
 const CRAWL_START_ERROR_MESSAGE = "An error occurred while starting the crawlers.";
+
+defineProps<{ sourceOptions: string[] }>();
+defineEmits<{ (e: "refetchBooks"): Promise<void> }>();
 
 const toast = useToast();
 const fetch = useAuthedFetch();
@@ -40,6 +44,11 @@ const startCrawlers = () =>
         <span class="text-lg font-semibold">Libri Admin</span>
       </div>
       <div class="flex items-center gap-4">
+        <BookUpsertSlideover :source-options="sourceOptions" @saved="$emit('refetchBooks')">
+          <template #default="{ onClick }">
+            <UButton icon="i-lucide-plus" class="rounded-full" @click="onClick" />
+          </template>
+        </BookUpsertSlideover>
         <UButton icon="i-lucide-refresh-ccw" class="rounded-full" @click="startCrawlers" />
 
         <UInput
