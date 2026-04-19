@@ -103,6 +103,7 @@ const columns: TableColumn<Book>[] = [
           v-model:page="page"
           :total="data?.page.totalElements"
           :items-per-page="data?.page.size"
+          :disabled="!store.isOnline"
         />
       </div>
     </div>

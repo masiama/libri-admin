@@ -1,9 +1,9 @@
 import { useAuth } from "@clerk/vue";
 import { createFetch, until, useFetch as useVUFetch } from "@vueuse/core";
 
-let _apiFetch: typeof useVUFetch | null = null;
+import { API_BASE_URL } from "@/utils";
 
-const API_BASE_URL = `${import.meta.env.VITE_API_BASE}/api/v1`;
+let _apiFetch: typeof useVUFetch | null = null;
 
 export const useFetch = () => {
   const { getToken, isLoaded, isSignedIn } = useAuth();

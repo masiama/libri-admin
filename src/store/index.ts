@@ -1,3 +1,3 @@
 import { reactive } from "vue";
 
-export const store = reactive({ search: "" });
+export const store = reactive({ search: "", isOnline: false });

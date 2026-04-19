@@ -3,6 +3,7 @@ import type { FormSubmitEvent } from "@nuxt/ui";
 import { computed, ref, useId, watch } from "vue";
 
 import { useAuthedFetch } from "@/composables/useFetch";
+import { store } from "@/store";
 import { cloneBook, createEmptyBook, showErrorToast, showSuccessToast } from "@/utils";
 import { type Book } from "@/utils/types";
 
@@ -94,7 +95,7 @@ const onSubmit = (event: FormSubmitEvent<Book>) => {
         type="submit"
         :form="formId"
         :loading="submitting"
-        :disabled="isSubmitDisabled"
+        :disabled="isSubmitDisabled || !store.isOnline"
         label="Submit"
       />
     </template>

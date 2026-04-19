@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import type { Column } from "@tanstack/table-core";
 
+import { store } from "@/store";
+
 defineProps<{ column: Column<any>; label: string }>();
 </script>
 
@@ -18,5 +20,6 @@ defineProps<{ column: Column<any>; label: string }>();
     "
     class="-mx-2.5"
     @click="() => column.toggleSorting(column.getIsSorted() === 'asc')"
+    :disabled="!store.isOnline"
   />
 </template>

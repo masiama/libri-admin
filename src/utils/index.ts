@@ -1,5 +1,7 @@
 import type { Book } from "./types";
 
+export const API_BASE_URL = `${import.meta.env.VITE_API_BASE}/api/v1`;
+
 export const createObjectUrl = (file: File) => URL.createObjectURL(file);
 
 export const getBookImageUrl = (book: Book) =>
