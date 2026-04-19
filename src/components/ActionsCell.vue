@@ -2,6 +2,8 @@
 import BookUpsertSlideover from "@/components/BookUpsertSlideover.vue";
 import type { Book } from "@/utils/types";
 
+import DeleteBookButton from "./DeleteBookButton.vue";
+
 defineProps<{ book: Book; sourceOptions: string[] }>();
 defineEmits<{ (e: "refetchBooks"): Promise<void> }>();
 </script>
@@ -17,6 +19,8 @@ defineEmits<{ (e: "refetchBooks"): Promise<void> }>();
         <UButton icon="i-lucide-pencil" square color="neutral" variant="ghost" @click="onClick" />
       </template>
     </BookUpsertSlideover>
+
+    <DeleteBookButton :book="book" @refetchBooks="$emit('refetchBooks')" />
 
     <UButton
       icon="i-lucide-external-link"

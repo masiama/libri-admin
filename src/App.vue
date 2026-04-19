@@ -49,7 +49,7 @@ const columns: TableColumn<Book>[] = [
   { accessorKey: "isbn", header: "ISBN", meta: { class: { th: "w-36" } } },
   { accessorKey: "sourceName", meta: { class: { th: "w-36" } } },
   { accessorKey: "title", meta: { class: { td: "truncate" } } },
-  { id: "actions", meta: { class: { th: "w-32" } } },
+  { id: "actions", meta: { class: { th: "w-36" } } },
 ];
 </script>
 
