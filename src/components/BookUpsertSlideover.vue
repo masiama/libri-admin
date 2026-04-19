@@ -46,7 +46,7 @@ const onSubmit = (event: FormSubmitEvent<Book>) => {
     formData.append("file", formBookImage.value);
   }
 
-  const requestPath = isEditMode.value ? `/books/${event.data.isbn}` : "/books";
+  const requestPath = isEditMode.value ? `/admin/books/${event.data.isbn}` : "/admin/books";
   const requestMethod = isEditMode.value ? "PUT" : "POST";
 
   fetch(requestPath, { method: requestMethod, body: formData })

@@ -19,7 +19,7 @@ const fetch = useAuthedFetch();
 const deleteBook = () => {
   deleting.value = true;
 
-  fetch(`/books/${props.book.isbn}`, { method: "DELETE" })
+  fetch(`/admin/books/${props.book.isbn}`, { method: "DELETE" })
     .then(async (response) => {
       if (!response.ok) {
         const message = await response.text();
