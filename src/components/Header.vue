@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { SignInButton, useAuth, UserButton } from "@clerk/vue";
+import { useTemplateRef } from "vue";
 
 import Logo from "@/assets/logo.svg?component";
 import { useAuthedFetch } from "@/composables/useFetch";
@@ -11,6 +12,9 @@ const CRAWL_START_ERROR_MESSAGE = "An error occurred while starting the crawlers
 const toast = useToast();
 const fetch = useAuthedFetch();
 const { isSignedIn } = useAuth();
+const filterRef = useTemplateRef("filter");
+
+defineShortcuts({ "/": () => filterRef.value?.inputRef?.focus() });
 
 const startCrawlers = () =>
   fetch("/admin/crawl", { method: "POST" })

@@ -2,22 +2,21 @@
 import type { TableColumn } from "@nuxt/ui";
 import type { SortingState } from "@tanstack/table-core";
 import { refDebounced } from "@vueuse/core";
-import { computed, ref, useTemplateRef, watch } from "vue";
+import { computed, ref, toRef, watch } from "vue";
 
+import ActionsCell from "./components/ActionsCell.vue";
 import Header from "./components/Header.vue";
 import SortableColumnHeader from "./components/SortableColumnHeader.vue";
 import { useFetch } from "./composables/useFetch";
 import { usePagination } from "./composables/usePagination";
+import { store } from "./store";
 import { showErrorToast } from "./utils";
 import type { Book, Source } from "./utils/types";
 
 const toast = useToast();
 
-const filterRef = useTemplateRef("filter");
-const filter = ref("");
-const debouncedFilter = refDebounced(filter, 300);
-
-defineShortcuts({ "/": () => filterRef.value?.inputRef?.focus() });
+const search = toRef(store, "search");
+const debouncedFilter = refDebounced(search, 300);
 
 const sorting = ref<SortingState>([]);
 
