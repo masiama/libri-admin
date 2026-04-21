@@ -1,9 +1,12 @@
 <script setup lang="ts">
 import type { Column } from "@tanstack/table-core";
+import { storeToRefs } from "pinia";
 
-import { store } from "@/store";
+import { useApiStatusStore } from "@/stores/apiStatus";
 
 defineProps<{ column: Column<any>; label: string }>();
+
+const { isOnline } = storeToRefs(useApiStatusStore());
 </script>
 
 <template>
@@ -20,6 +23,6 @@ defineProps<{ column: Column<any>; label: string }>();
     "
     class="-mx-2.5"
     @click="() => column.toggleSorting(column.getIsSorted() === 'asc')"
-    :disabled="!store.isOnline"
+    :disabled="!isOnline"
   />
 </template>

@@ -1,17 +1,19 @@
 <script setup lang="ts">
 import type { FormSubmitEvent } from "@nuxt/ui";
+import { storeToRefs } from "pinia";
 import { computed, ref, useId, watch } from "vue";
 
 import { useAuthedFetch } from "@/composables/useFetch";
-import { store } from "@/store";
+import { useApiStatusStore } from "@/stores/apiStatus";
 import { cloneBook, createEmptyBook, showErrorToast, showSuccessToast } from "@/utils";
 import { type Book } from "@/utils/types";
 
-const props = defineProps<{ book?: Book; sourceOptions: string[] }>();
+const props = defineProps<{ book?: Book }>();
 const emit = defineEmits<{ (e: "saved"): Promise<void> }>();
 
 const toast = useToast();
 const fetch = useAuthedFetch();
+const { isOnline } = storeToRefs(useApiStatusStore());
 
 const formId = useId();
 const submitting = ref(false);
@@ -83,7 +85,6 @@ const onSubmit = (event: FormSubmitEvent<Book>) => {
         v-model:book="formBook"
         v-model:book-image="formBookImage"
         :form-id="formId"
-        :source-options="sourceOptions"
         :isbn-disabled="isEditMode"
         :image-required="!isEditMode"
         @submit="onSubmit"
@@ -95,7 +96,7 @@ const onSubmit = (event: FormSubmitEvent<Book>) => {
         type="submit"
         :form="formId"
         :loading="submitting"
-        :disabled="isSubmitDisabled || !store.isOnline"
+        :disabled="isSubmitDisabled || !isOnline"
         label="Submit"
       />
     </template>

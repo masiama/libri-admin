@@ -1,20 +1,19 @@
 <script setup lang="ts">
 import type { FormSubmitEvent } from "@nuxt/ui";
+import { storeToRefs } from "pinia";
 import { computed, ref, watch } from "vue";
 
+import { useSourcesStore } from "@/stores/sources";
 import { createObjectUrl, getBookImageUrl } from "@/utils";
 import { BookSchema, type Book } from "@/utils/types";
 
 const book = defineModel<Book>("book", { required: true });
 const bookImage = defineModel<File>("bookImage");
 
-defineProps<{
-  formId: string;
-  sourceOptions: string[];
-  isbnDisabled?: boolean;
-  imageRequired?: boolean;
-}>();
+defineProps<{ formId: string; isbnDisabled?: boolean; imageRequired?: boolean }>();
 defineEmits<{ (e: "submit", event: FormSubmitEvent<Book>): void }>();
+
+const { sourceOptions } = storeToRefs(useSourcesStore());
 
 const imageLoadFailed = ref(false);
 

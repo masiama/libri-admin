@@ -1,8 +1,9 @@
 <script setup lang="ts">
+import { storeToRefs } from "pinia";
 import { ref } from "vue";
 
 import { useAuthedFetch } from "@/composables/useFetch";
-import { store } from "@/store";
+import { useApiStatusStore } from "@/stores/apiStatus";
 import { showErrorToast, showSuccessToast } from "@/utils";
 import type { Book } from "@/utils/types";
 
@@ -16,6 +17,7 @@ const deleting = ref(false);
 
 const toast = useToast();
 const fetch = useAuthedFetch();
+const { isOnline } = storeToRefs(useApiStatusStore());
 
 const deleteBook = () => {
   deleting.value = true;
@@ -47,13 +49,7 @@ const deleteBook = () => {
     :title="`Delete ${book.title} and its cover image?`"
     description="This action cannot be undone."
   >
-    <UButton
-      icon="i-lucide-trash-2"
-      square
-      color="error"
-      variant="ghost"
-      :disabled="!store.isOnline"
-    />
+    <UButton icon="i-lucide-trash-2" square color="error" variant="ghost" :disabled="!isOnline" />
 
     <template #footer>
       <div class="flex w-full justify-end gap-2">
@@ -63,7 +59,7 @@ const deleteBook = () => {
           :loading="deleting"
           label="Delete"
           @click="deleteBook"
-          :disabled="!store.isOnline"
+          :disabled="!isOnline"
         />
       </div>
     </template>

@@ -1,41 +1,12 @@
 <script setup lang="ts">
 import { SignInButton, useAuth, UserButton } from "@clerk/vue";
-import { useTemplateRef } from "vue";
+import { storeToRefs } from "pinia";
 
 import Logo from "@/assets/logo.svg?component";
-import BookUpsertSlideover from "@/components/BookUpsertSlideover.vue";
-import { useApiStatus } from "@/composables/useApiStatus";
-import { useAuthedFetch } from "@/composables/useFetch";
-import { store } from "@/store";
-import { showErrorToast, showSuccessToast } from "@/utils";
+import { useApiStatusStore } from "@/stores/apiStatus";
 
-const CRAWL_START_ERROR_MESSAGE = "An error occurred while starting the crawlers.";
-
-defineProps<{ sourceOptions: string[] }>();
-const emit = defineEmits<{ (e: "refetchBooks"): Promise<void> }>();
-
-const toast = useToast();
-const fetch = useAuthedFetch();
 const { isSignedIn } = useAuth();
-const filterRef = useTemplateRef("filter");
-const status = useApiStatus(() => emit("refetchBooks"));
-
-defineShortcuts({ "/": () => filterRef.value?.inputRef?.focus() });
-
-const startCrawlers = () =>
-  fetch("/admin/crawl", { method: "POST" })
-    .then(async (response) => {
-      if (!response.ok) {
-        const message = await response.text();
-        throw new Error(message || CRAWL_START_ERROR_MESSAGE);
-      }
-
-      showSuccessToast(toast, "Crawlers started successfully!");
-    })
-    .catch((error) => {
-      console.error(error);
-      showErrorToast(toast, error instanceof Error ? error.message : CRAWL_START_ERROR_MESSAGE);
-    });
+const { status } = storeToRefs(useApiStatusStore());
 </script>
 
 <template>
@@ -54,30 +25,7 @@ const startCrawlers = () =>
         />
       </div>
       <div class="flex items-center gap-4">
-        <BookUpsertSlideover :source-options="sourceOptions" @saved="$emit('refetchBooks')">
-          <template #default="{ onClick }">
-            <UButton icon="i-lucide-plus" class="rounded-full" @click="onClick" />
-          </template>
-        </BookUpsertSlideover>
-        <UButton
-          icon="i-lucide-refresh-ccw"
-          class="rounded-full"
-          @click="startCrawlers"
-          :disabled="!store.isOnline"
-        />
-
-        <UInput
-          ref="filter"
-          v-model="store.search"
-          class="max-w-sm"
-          icon="i-lucide-search"
-          placeholder="Filter books..."
-          :disabled="!store.isOnline"
-        >
-          <template #trailing>
-            <UKbd value="/" />
-          </template>
-        </UInput>
+        <slot name="controls" />
 
         <UserButton v-if="isSignedIn" />
         <SignInButton v-else mode="modal">

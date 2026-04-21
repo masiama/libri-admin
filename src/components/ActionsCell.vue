@@ -4,17 +4,13 @@ import type { Book } from "@/utils/types";
 
 import DeleteBookButton from "./DeleteBookButton.vue";
 
-defineProps<{ book: Book; sourceOptions: string[] }>();
+defineProps<{ book: Book }>();
 defineEmits<{ (e: "refetchBooks"): Promise<void> }>();
 </script>
 
 <template>
   <div class="flex gap-2">
-    <BookUpsertSlideover
-      :book="book"
-      :source-options="sourceOptions"
-      @saved="$emit('refetchBooks')"
-    >
+    <BookUpsertSlideover :book="book" @saved="$emit('refetchBooks')">
       <template #default="{ onClick }">
         <UButton icon="i-lucide-pencil" square color="neutral" variant="ghost" @click="onClick" />
       </template>
