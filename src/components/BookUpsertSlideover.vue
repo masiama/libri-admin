@@ -5,7 +5,8 @@ import { computed, ref, useId, watch } from "vue";
 
 import { useAuthedFetch } from "@/composables/useFetch";
 import { useApiStatusStore } from "@/stores/apiStatus";
-import { cloneBook, createEmptyBook, showErrorToast, showSuccessToast } from "@/utils";
+import { catchPromiseError, showErrorToast, showSuccessToast } from "@/utils";
+import { cloneBook, createEmptyBook } from "@/utils/book";
 import { type Book } from "@/utils/types";
 
 const props = defineProps<{ book?: Book }>();
@@ -65,10 +66,7 @@ const onSubmit = (event: FormSubmitEvent<Book>) => {
       formBook.value = undefined;
       showSuccessToast(toast, submitSuccessMessage.value);
     })
-    .catch((error) => {
-      console.error(error);
-      showErrorToast(toast, error instanceof Error ? error.message : submitErrorMessage.value);
-    })
+    .catch(catchPromiseError(toast, submitErrorMessage.value))
     .finally(() => (submitting.value = false));
 };
 </script>

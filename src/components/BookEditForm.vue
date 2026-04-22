@@ -4,7 +4,8 @@ import { storeToRefs } from "pinia";
 import { computed, ref, watch } from "vue";
 
 import { useSourcesStore } from "@/stores/sources";
-import { createObjectUrl, getBookImageUrl } from "@/utils";
+import { createObjectUrl } from "@/utils";
+import { getBookImageUrl } from "@/utils/book";
 import { BookSchema, type Book } from "@/utils/types";
 
 const book = defineModel<Book>("book", { required: true });

@@ -16,3 +16,14 @@ export const BookSchema = z.object({
   sourceName: z.string().nonempty("Source is required"),
 });
 export type Book = z.infer<typeof BookSchema>;
+
+export const CrawlJobSchema = z.object({
+  id: z.number(),
+  sourceName: z.string(),
+  startedAt: z.string(),
+  finishedAt: z.string().nullable(),
+  status: z.enum(["RUNNING", "SUCCESS", "FAILED"]),
+  booksFound: z.number(),
+  errorMessage: z.string().nullable(),
+});
+export type CrawlJob = z.infer<typeof CrawlJobSchema>;

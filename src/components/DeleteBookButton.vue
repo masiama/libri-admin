@@ -4,7 +4,7 @@ import { ref } from "vue";
 
 import { useAuthedFetch } from "@/composables/useFetch";
 import { useApiStatusStore } from "@/stores/apiStatus";
-import { showErrorToast, showSuccessToast } from "@/utils";
+import { catchPromiseError, showErrorToast, showSuccessToast } from "@/utils";
 import type { Book } from "@/utils/types";
 
 const BOOK_DELETE_ERROR_MESSAGE = "An error occurred while deleting the book.";
@@ -35,10 +35,7 @@ const deleteBook = () => {
       deleteOpen.value = false;
       showSuccessToast(toast, "Book deleted successfully!");
     })
-    .catch((error) => {
-      console.error(error);
-      showErrorToast(toast, error instanceof Error ? error.message : BOOK_DELETE_ERROR_MESSAGE);
-    })
+    .catch(catchPromiseError(toast, BOOK_DELETE_ERROR_MESSAGE))
     .finally(() => (deleting.value = false));
 };
 </script>

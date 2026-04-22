@@ -34,6 +34,13 @@ declare module 'vue-router/auto-routes' {
       Record<never, never>,
       | never
     >,
+    '/crawler': RouteRecordInfo<
+      '/crawler',
+      '/crawler',
+      Record<never, never>,
+      Record<never, never>,
+      | never
+    >,
     '/login': RouteRecordInfo<
       '/login',
       '/login',
@@ -57,6 +64,12 @@ declare module 'vue-router/auto-routes' {
     'src/pages/index.vue': {
       routes:
         | '/'
+      views:
+        | never
+    }
+    'src/pages/crawler.vue': {
+      routes:
+        | '/crawler'
       views:
         | never
     }
