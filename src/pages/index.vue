@@ -109,7 +109,7 @@ const columns: TableColumn<Book>[] = [
 
     <template #footer-controls>
       <UPagination
-        v-if="data"
+        v-if="data && data.page.totalElements > data.page.size"
         v-model:page="page"
         :total="data.page.totalElements"
         :items-per-page="data.page.size"
