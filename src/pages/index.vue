@@ -10,7 +10,7 @@ import BookUpsertSlideover from "@/components/BookUpsertSlideover.vue";
 import { usePagination } from "@/composables/usePagination";
 import { useApiStatusStore } from "@/stores/apiStatus";
 import { showErrorToast } from "@/utils";
-import type { Book } from "@/utils/types";
+import { BookSchema, type Book } from "@/utils/types";
 
 const toast = useToast();
 const { isOnline } = storeToRefs(useApiStatusStore());
@@ -27,7 +27,7 @@ const {
   isFetching,
   error: booksError,
   execute: refetchBooks,
-} = usePagination<Book>("/books", { filter: debouncedFilter, sorting });
+} = usePagination("/books", BookSchema, { filter: debouncedFilter, sorting });
 
 watch(booksError, (error) => {
   if (error && error.name !== "AbortError") {
