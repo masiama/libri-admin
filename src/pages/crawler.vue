@@ -3,10 +3,11 @@ import type { TableColumn } from "@nuxt/ui";
 import { type Row, type SortingState } from "@tanstack/table-core";
 import { formatDate } from "@vueuse/core";
 import { storeToRefs } from "pinia";
-import { ref, watch } from "vue";
+import { onMounted, ref, watch } from "vue";
 
 import AppLayout from "@/components/AppLayout.vue";
 import CrawlJobStatus from "@/components/CrawlJobStatus.vue";
+import { useCrawlJobEvents } from "@/composables/useCrawlJobEvents";
 import { useAuthedFetch } from "@/composables/useFetch";
 import { usePagination } from "@/composables/usePagination";
 import { useApiStatusStore } from "@/stores/apiStatus";
@@ -68,6 +69,23 @@ watch(historyError, (error) => {
     console.error(error);
   }
 });
+
+const { onJobStarted, onJobUpdated, onError } = useCrawlJobEvents();
+
+onJobStarted(() => refetchHistory());
+onJobUpdated((job: CrawlJob) => {
+  const currentPage = data.value;
+  if (!currentPage) return;
+
+  const existingIndex = currentPage.content.findIndex((item) => item.id === job.id);
+  if (existingIndex === -1) return;
+
+  data.value = {
+    ...currentPage,
+    content: currentPage.content.map((item, index) => (index === existingIndex ? job : item)),
+  };
+});
+onError(console.error);
 
 const columns: TableColumn<CrawlJob>[] = [
   { id: "expand", meta: { class: { th: "w-16", td: "py-0" } } },
@@ -167,6 +185,7 @@ const expandRow = (_: Event, row: Row<CrawlJob>) =>
               row.getIsExpanded() ? 'duration-200 rotate-180' : '',
             ],
           }"
+          @click="row.toggleExpanded()"
         />
       </template>
 
