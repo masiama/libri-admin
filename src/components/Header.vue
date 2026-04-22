@@ -31,6 +31,8 @@ const { status } = storeToRefs(useApiStatusStore());
         <SignInButton v-else mode="modal">
           <UAvatar icon="i-lucide-user" class="cursor-pointer" />
         </SignInButton>
+
+        <UColorModeButton />
       </div>
     </div>
   </header>
