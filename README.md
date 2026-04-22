@@ -7,8 +7,11 @@ Built with Vue 3, Vite, TypeScript, Clerk authentication, and Nuxt UI.
 ## Features
 
 - Browse books with pagination, filtering, and sorting
-- Add and Edit book metadata and cover images
-- Trigger crawler runs from the admin UI
+- Add, edit, and delete books
+- Upload or replace cover images while managing books
+- Trigger crawler runs for all sources or a single source
+- Browse crawl history with status, books found, and error details
+- Receive live crawler status updates in the UI via SSE
 - Protect admin access with Clerk-issued JWTs
 
 ## Requirements
