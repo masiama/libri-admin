@@ -3,10 +3,11 @@ import type { TableColumn } from "@nuxt/ui";
 import type { SortingState } from "@tanstack/table-core";
 import { refDebounced } from "@vueuse/core";
 import { storeToRefs } from "pinia";
-import { ref, useTemplateRef, watch } from "vue";
+import { computed, ref, useTemplateRef, watch } from "vue";
 
 import AppLayout from "@/components/AppLayout.vue";
 import BookUpsertSlideover from "@/components/BookUpsertSlideover.vue";
+import BulkDeleteBooksButton from "@/components/BulkDeleteBooksButton.vue";
 import { usePagination } from "@/composables/usePagination";
 import { useApiStatusStore } from "@/stores/apiStatus";
 import { showErrorToast } from "@/utils";
@@ -20,6 +21,7 @@ const debouncedFilter = refDebounced(search, 300);
 const filterRef = useTemplateRef("filter");
 
 const sorting = ref<SortingState>([]);
+const selectedBookIsbns = ref<string[]>([]);
 
 const {
   page,
@@ -36,9 +38,50 @@ watch(booksError, (error) => {
   }
 });
 
+const booksOnPage = computed(() => data.value?.content ?? []);
+const selectableBookIsbns = computed(() => booksOnPage.value.map((book) => book.isbn));
+const selectedBooks = computed(() =>
+  booksOnPage.value.filter((book) => selectedBookIsbns.value.includes(book.isbn)),
+);
+const allBooksSelected = computed(
+  () =>
+    selectableBookIsbns.value.length > 0 &&
+    selectedBookIsbns.value.length === selectableBookIsbns.value.length,
+);
+const someBooksSelected = computed(
+  () => selectedBookIsbns.value.length > 0 && !allBooksSelected.value,
+);
+
+const toggleAllBooks = (checked: boolean | "indeterminate") => {
+  selectedBookIsbns.value = checked === true ? [...selectableBookIsbns.value] : [];
+};
+
+const toggleBook = (isbn: string, checked: boolean | "indeterminate") => {
+  if (checked === true) {
+    if (!selectedBookIsbns.value.includes(isbn)) {
+      selectedBookIsbns.value.push(isbn);
+    }
+  } else {
+    selectedBookIsbns.value = selectedBookIsbns.value.filter(
+      (selectedIsbn) => selectedIsbn !== isbn,
+    );
+  }
+};
+
+const refetchBooksAndClearSelection = async () => {
+  await refetchBooks();
+  selectedBookIsbns.value = [];
+};
+
+watch(selectableBookIsbns, (isbns) => {
+  const currentPageIsbns = new Set(isbns);
+  selectedBookIsbns.value = selectedBookIsbns.value.filter((isbn) => currentPageIsbns.has(isbn));
+});
+
 defineShortcuts({ "/": () => filterRef.value?.inputRef?.focus() });
 
 const columns: TableColumn<Book>[] = [
+  { id: "select", header: "", meta: { class: { th: "w-12" } } },
   { accessorKey: "isbn", header: "ISBN", meta: { class: { th: "w-36" } } },
   { accessorKey: "sourceName", meta: { class: { th: "w-36" } } },
   { accessorKey: "title", meta: { class: { td: "truncate" } } },
@@ -59,6 +102,8 @@ const columns: TableColumn<Book>[] = [
           />
         </template>
       </BookUpsertSlideover>
+
+      <BulkDeleteBooksButton :books="selectedBooks" @deleted="refetchBooksAndClearSelection" />
 
       <UInput
         ref="filter"
@@ -90,6 +135,15 @@ const columns: TableColumn<Book>[] = [
         separator: 'h-0',
       }"
     >
+      <template #select-header>
+        <UCheckbox
+          :model-value="someBooksSelected ? 'indeterminate' : allBooksSelected"
+          :disabled="!isOnline || !booksOnPage.length"
+          aria-label="Select all books on page"
+          @update:model-value="toggleAllBooks"
+        />
+      </template>
+
       <template #sourceName-header="{ column }">
         <SortableColumnHeader :column="column" label="Source" />
       </template>
@@ -98,12 +152,20 @@ const columns: TableColumn<Book>[] = [
         <SortableColumnHeader :column="column" label="Title" />
       </template>
 
+      <template #select-cell="{ row }">
+        <UCheckbox
+          :model-value="selectedBookIsbns.includes(row.original.isbn)"
+          :disabled="!isOnline"
+          @update:model-value="toggleBook(row.original.isbn, $event)"
+        />
+      </template>
+
       <template #sourceName-cell="{ row }">
         <UBadge variant="subtle" color="neutral">{{ row.getValue("sourceName") }}</UBadge>
       </template>
 
       <template #actions-cell="{ row }">
-        <ActionsCell :book="row.original" @refetchBooks="refetchBooks" />
+        <ActionsCell :book="row.original" @refetchBooks="refetchBooksAndClearSelection" />
       </template>
     </UTable>
 

@@ -13,15 +13,12 @@ const props = defineProps<{ book: Book }>();
 const emit = defineEmits<{ (e: "refetchBooks"): Promise<void> }>();
 
 const deleteOpen = ref(false);
-const deleting = ref(false);
 
 const toast = useToast();
 const fetch = useAuthedFetch();
 const { isOnline } = storeToRefs(useApiStatusStore());
 
-const deleteBook = () => {
-  deleting.value = true;
-
+const deleteBook = () =>
   fetch(`/admin/books/${props.book.isbn}`, { method: "DELETE" })
     .then(async (response) => {
       if (!response.ok) {
@@ -35,9 +32,7 @@ const deleteBook = () => {
       deleteOpen.value = false;
       showSuccessToast(toast, "Book deleted successfully!");
     })
-    .catch(catchPromiseError(toast, BOOK_DELETE_ERROR_MESSAGE))
-    .finally(() => (deleting.value = false));
-};
+    .catch(catchPromiseError(toast, BOOK_DELETE_ERROR_MESSAGE));
 </script>
 
 <template>
@@ -53,9 +48,9 @@ const deleteBook = () => {
         <UButton color="neutral" variant="ghost" label="Cancel" @click="deleteOpen = false" />
         <UButton
           color="error"
-          :loading="deleting"
           label="Delete"
           @click="deleteBook"
+          loading-auto
           :disabled="!isOnline"
         />
       </div>
