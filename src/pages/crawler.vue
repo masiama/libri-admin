@@ -23,7 +23,7 @@ const fetch = useAuthedFetch();
 const { isOnline } = storeToRefs(useApiStatusStore());
 const { enabledSourceOptions } = storeToRefs(useSourcesStore());
 
-const selectedSource = ref<string>();
+const selectedSources = ref<string[]>([]);
 
 const startAll = () =>
   fetch("/admin/crawl", { method: "POST" })
@@ -37,11 +37,8 @@ const startAll = () =>
     })
     .catch(catchPromiseError(toast, CRAWLERS_START_ERROR_MESSAGE));
 
-const startOne = () => {
-  const source = selectedSource.value;
-  if (!source) return;
-
-  return fetch(`/admin/crawl/${encodeURIComponent(source)}`, { method: "POST" })
+const startOne = (source: string) =>
+  fetch(`/admin/crawl/${encodeURIComponent(source)}`, { method: "POST" })
     .then(async (response) => {
       if (!response.ok) {
         const message = await response.text();
@@ -51,7 +48,11 @@ const startOne = () => {
       return refetchHistory();
     })
     .catch(catchPromiseError(toast, CRAWLER_START_ERROR_MESSAGE));
-};
+
+const startSelected = () =>
+  Promise.all(selectedSources.value.map(startOne)).then(() => {
+    selectedSources.value = [];
+  });
 
 const sorting = ref<SortingState>([{ id: "startedAt", desc: true }]);
 
@@ -113,19 +114,21 @@ const expandRow = (_: Event, row: Row<CrawlJob>) =>
   <AppLayout>
     <template #header-controls>
       <USelect
-        v-model="selectedSource"
+        v-model="selectedSources"
         :items="enabledSourceOptions"
-        placeholder="Select source"
+        placeholder="Select source(s)"
         class="w-56"
         :disabled="!isOnline"
+        multiple
       />
 
       <UButton
         icon="i-lucide-play"
-        label="Start source"
+        :label="`Start source${selectedSources.length > 1 ? 's' : ''}`"
         class="rounded-full"
-        :disabled="!isOnline || !selectedSource"
-        @click="startOne"
+        :disabled="!isOnline || !selectedSources.length"
+        @click="startSelected"
+        loading-auto
       />
 
       <span class="text-sm font-medium">OR</span>
@@ -136,6 +139,7 @@ const expandRow = (_: Event, row: Row<CrawlJob>) =>
         class="rounded-full"
         :disabled="!isOnline"
         @click="startAll"
+        loading-auto
       />
     </template>
 
