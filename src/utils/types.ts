@@ -27,3 +27,16 @@ export const CrawlJobSchema = z.object({
   errorMessage: z.string().nullable(),
 });
 export type CrawlJob = z.infer<typeof CrawlJobSchema>;
+
+export const PurgatoryBookSchema = z.object({
+  id: z.number(),
+  invalidIsbn: z.string(),
+  title: z.string(),
+  authors: z.array(z.string()),
+  url: z.url(),
+  sourceName: z.string(),
+  resolvedIsbn: z.string().nullable(),
+  createdAt: z.string(),
+  deleted: z.boolean(),
+});
+export type PurgatoryBook = z.infer<typeof PurgatoryBookSchema>;

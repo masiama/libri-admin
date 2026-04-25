@@ -6,6 +6,7 @@ import { storeToRefs } from "pinia";
 import { computed, ref, useTemplateRef, watch } from "vue";
 
 import AppLayout from "@/components/AppLayout.vue";
+import BooksActionsCell from "@/components/BooksActionsCell.vue";
 import BookUpsertSlideover from "@/components/BookUpsertSlideover.vue";
 import BulkDeleteBooksButton from "@/components/BulkDeleteBooksButton.vue";
 import { usePagination } from "@/composables/usePagination";
@@ -82,7 +83,7 @@ defineShortcuts({ "/": () => filterRef.value?.inputRef?.focus() });
 
 const columns: TableColumn<Book>[] = [
   { id: "select", header: "", meta: { class: { th: "w-12" } } },
-  { accessorKey: "isbn", header: "ISBN", meta: { class: { th: "w-36" } } },
+  { accessorKey: "isbn", header: "ISBN", meta: { class: { th: "w-36", td: "font-mono" } } },
   { accessorKey: "sourceName", meta: { class: { th: "w-36" } } },
   { accessorKey: "title", meta: { class: { td: "truncate" } } },
   { id: "actions", meta: { class: { th: "w-36" } } },
@@ -165,7 +166,7 @@ const columns: TableColumn<Book>[] = [
       </template>
 
       <template #actions-cell="{ row }">
-        <ActionsCell :book="row.original" @refetchBooks="refetchBooksAndClearSelection" />
+        <BooksActionsCell :book="row.original" @refetchBooks="refetchBooksAndClearSelection" />
       </template>
     </UTable>
 
