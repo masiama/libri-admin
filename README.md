@@ -12,6 +12,7 @@ Built with Vue 3, Vite, TypeScript, Clerk authentication, and Nuxt UI.
 - Trigger crawler runs for all sources or a single source
 - Browse crawl history with status, books found, and error details
 - Receive live crawler status updates in the UI via SSE
+- Review and resolve books with invalid ISBNs via the purgatory queue
 - Protect admin access with Clerk-issued JWTs
 
 ## Requirements
