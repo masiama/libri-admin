@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { TableColumn } from "@nuxt/ui";
 import type { SortingState } from "@tanstack/table-core";
-import { refDebounced } from "@vueuse/core";
+import { formatDate, refDebounced } from "@vueuse/core";
 import { storeToRefs } from "pinia";
 import { ref, useTemplateRef, watch } from "vue";
 
@@ -44,6 +44,7 @@ defineShortcuts({ "/": () => filterRef.value?.inputRef?.focus() });
 const columns: TableColumn<PurgatoryBook>[] = [
   { accessorKey: "invalidIsbn", header: "ISBN", meta: { class: { th: "w-40" } } },
   { accessorKey: "sourceName", meta: { class: { th: "w-36" } } },
+  { accessorKey: "createdAt", meta: { class: { th: "w-44" } } },
   { accessorKey: "title", meta: { class: { td: "truncate" } } },
   { id: "actions", meta: { class: { th: "w-46" } } },
 ];
@@ -98,12 +99,20 @@ watch(data, (newData) => {
         <SortableColumnHeader :column="column" label="Title" />
       </template>
 
+      <template #createdAt-header="{ column }">
+        <SortableColumnHeader :column="column" label="Date" />
+      </template>
+
       <template #invalidIsbn-cell="{ row }">
         <UInput v-model="isbns[row.original.id]" class="font-mono" />
       </template>
 
       <template #sourceName-cell="{ row }">
         <UBadge variant="subtle" color="neutral">{{ row.getValue("sourceName") }}</UBadge>
+      </template>
+
+      <template #createdAt-cell="{ row }">
+        {{ formatDate(new Date(row.original.createdAt), "HH:mm:ss DD.MM.YYYY") }}
       </template>
 
       <template #actions-cell="{ row }">
