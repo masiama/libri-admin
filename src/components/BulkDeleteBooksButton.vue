@@ -42,7 +42,7 @@ const deleteBooks = () => {
   return fetch("/admin/books/bulk", {
     method: "DELETE",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(selectedIsbns.value),
+    body: JSON.stringify({ isbns: selectedIsbns.value }),
   })
     .then(async (response) => {
       if (!response.ok) {

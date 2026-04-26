@@ -194,12 +194,12 @@ const expandRow = (_: Event, row: Row<CrawlJob>) =>
       </template>
 
       <template #startedAt-cell="{ row }">
-        {{ formatDate(new Date(row.original.startedAt), "HH:mm:ss DD.MM.YYYY") }}
+        {{ formatDate(row.original.startedAt, "HH:mm:ss DD.MM.YYYY") }}
       </template>
 
       <template #finishedAt-cell="{ row }">
         <span v-if="row.original.finishedAt">
-          {{ formatDate(new Date(row.original.finishedAt), "HH:mm:ss DD.MM.YYYY") }}
+          {{ formatDate(row.original.finishedAt, "HH:mm:ss DD.MM.YYYY") }}
         </span>
         <UIcon v-else name="i-lucide-minus" class="mx-auto" />
       </template>

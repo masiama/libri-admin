@@ -20,7 +20,11 @@ const fetch = useAuthedFetch();
 const { isOnline } = storeToRefs(useApiStatusStore());
 
 const approveBook = () =>
-  fetch(`/admin/purgatory/${props.purgatoryBook.id}/approve`, { method: "POST", body: props.isbn })
+  fetch(`/admin/purgatory/${props.purgatoryBook.id}/approve`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ isbn: props.isbn }),
+  })
     .then(async (response) => {
       if (!response.ok) {
         const message = await response.text();

@@ -112,7 +112,7 @@ watch(data, (newData) => {
       </template>
 
       <template #createdAt-cell="{ row }">
-        {{ formatDate(new Date(row.original.createdAt), "HH:mm:ss DD.MM.YYYY") }}
+        {{ formatDate(row.original.createdAt, "HH:mm:ss DD.MM.YYYY") }}
       </template>
 
       <template #actions-cell="{ row }">
