@@ -11,4 +11,5 @@ export const createEmptyBook = (): Book => ({
   authors: [],
   url: "",
   sourceName: "",
+  barcodes: [],
 });

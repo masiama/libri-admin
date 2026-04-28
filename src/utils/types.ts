@@ -4,6 +4,15 @@ export const SourceSchema = z.object({ name: z.string(), enabled: z.boolean() })
 export type Source = z.infer<typeof SourceSchema>;
 export const SourcesSchema = z.array(SourceSchema);
 
+export const BarcodeSchema = z
+  .object({
+    value: z.string().nonempty("Barcode value is required"),
+    type: z.string().nonempty("Barcode type is required"),
+  })
+  .strict();
+export type Barcode = z.infer<typeof BarcodeSchema>;
+export const BarcodesSchema = z.array(BarcodeSchema);
+
 export const BookSchema = z
   .object({
     isbn: z.string().nonempty("ISBN is required"),
@@ -11,6 +20,7 @@ export const BookSchema = z
     authors: z.array(z.string().nonempty()),
     url: z.url(),
     sourceName: z.string().nonempty("Source is required"),
+    barcodes: z.array(BarcodeSchema).nonempty("At least one barcode is required"),
   })
   .strict();
 export type Book = z.infer<typeof BookSchema>;

@@ -6,7 +6,7 @@ import { computed, ref, watch } from "vue";
 import { useSourcesStore } from "@/stores/sources";
 import { createObjectUrl } from "@/utils";
 import { getBookImageUrl } from "@/utils/book";
-import { BookSchema, type Book } from "@/utils/types";
+import { BarcodeSchema, BookSchema, type Book } from "@/utils/types";
 
 const book = defineModel<Book>("book", { required: true });
 const bookImage = defineModel<File>("bookImage");
@@ -83,6 +83,44 @@ watch(
 
     <UFormField label="Source" name="sourceName" required>
       <USelect v-model="book.sourceName" :items="sourceOptions" class="w-full" />
+    </UFormField>
+
+    <UFormField label="Barcodes" name="barcodes" required>
+      <div class="mb-4 flex flex-col gap-y-2" v-if="book.barcodes.length">
+        <UForm
+          v-for="(barcode, index) in book.barcodes"
+          :key="index"
+          :name="`barcodes.${index}`"
+          :schema="BarcodeSchema"
+          nested
+        >
+          <template #default="{ errors }">
+            <UFormField
+              required
+              :error="errors.length ? errors.map((e) => e.message).join(', ') : false"
+              :ui="{ error: 'm-1' }"
+            >
+              <UFieldGroup>
+                <UInput v-model="barcode.type" placeholder="Type" />
+                <UInput v-model="barcode.value" placeholder="Value" />
+                <UButton
+                  color="neutral"
+                  variant="subtle"
+                  icon="i-lucide-trash"
+                  @click="book.barcodes = book.barcodes.filter((_, i) => i !== index)"
+                />
+              </UFieldGroup>
+            </UFormField>
+          </template>
+        </UForm>
+      </div>
+      <UButton
+        color="primary"
+        variant="outline"
+        @click="book.barcodes.push({ type: '', value: '' })"
+        label="Add Barcode"
+        icon="i-lucide-plus"
+      />
     </UFormField>
   </UForm>
 </template>
