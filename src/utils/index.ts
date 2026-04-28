@@ -12,3 +12,23 @@ export const catchPromiseError =
     console.error(error);
     showErrorToast(toast, error instanceof Error ? error.message : defaultMessage);
   };
+
+export const formatDuration = (start: Date, end: Date): string => {
+  const diffInMs = Math.abs(end.getTime() - start.getTime());
+  if (diffInMs < 1000) return `${diffInMs}ms`;
+
+  let totalSeconds = Math.floor(diffInMs / 1000);
+  const hours = Math.floor(totalSeconds / 3600);
+  totalSeconds %= 3600;
+
+  const minutes = Math.floor(totalSeconds / 60);
+  const seconds = totalSeconds % 60;
+
+  const parts: string[] = [];
+
+  if (hours > 0) parts.push(`${hours}h`);
+  if (minutes > 0) parts.push(`${minutes}m`);
+  if (seconds > 0) parts.push(`${seconds}s`);
+
+  return parts.join(" ");
+};

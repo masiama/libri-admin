@@ -3,7 +3,7 @@ import type { TableColumn } from "@nuxt/ui";
 import { type Row, type SortingState } from "@tanstack/table-core";
 import { formatDate } from "@vueuse/core";
 import { storeToRefs } from "pinia";
-import { onMounted, ref, watch } from "vue";
+import { ref, watch } from "vue";
 
 import AppLayout from "@/components/AppLayout.vue";
 import CrawlJobStatus from "@/components/CrawlJobStatus.vue";
@@ -12,7 +12,7 @@ import { useAuthedFetch } from "@/composables/useFetch";
 import { usePagination } from "@/composables/usePagination";
 import { useApiStatusStore } from "@/stores/apiStatus";
 import { useSourcesStore } from "@/stores/sources";
-import { catchPromiseError, showErrorToast, showSuccessToast } from "@/utils";
+import { catchPromiseError, formatDuration, showErrorToast, showSuccessToast } from "@/utils";
 import { CrawlJobSchema, type CrawlJob } from "@/utils/types";
 
 const CRAWLER_START_ERROR_MESSAGE = "Failed to start crawler.";
@@ -92,6 +92,11 @@ const columns: TableColumn<CrawlJob>[] = [
   { id: "expand", meta: { class: { th: "w-16", td: "py-0" } } },
   { accessorKey: "startedAt", meta: { class: { th: "w-44" } } },
   { accessorKey: "finishedAt", meta: { class: { th: "w-44" } } },
+  {
+    id: "duration",
+    header: "Duration",
+    meta: { class: { th: "w-44 text-center", td: "text-center" } },
+  },
   { accessorKey: "sourceName", meta: { class: { th: "w-40" } } },
   {
     accessorKey: "booksFound",
@@ -200,6 +205,13 @@ const expandRow = (_: Event, row: Row<CrawlJob>) =>
       <template #finishedAt-cell="{ row }">
         <span v-if="row.original.finishedAt">
           {{ formatDate(row.original.finishedAt, "HH:mm:ss DD.MM.YYYY") }}
+        </span>
+        <UIcon v-else name="i-lucide-minus" class="mx-auto" />
+      </template>
+
+      <template #duration-cell="{ row }">
+        <span v-if="row.original.finishedAt">
+          {{ formatDuration(row.original.startedAt, row.original.finishedAt) }}
         </span>
         <UIcon v-else name="i-lucide-minus" class="mx-auto" />
       </template>
