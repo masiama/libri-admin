@@ -1,7 +1,12 @@
 import { createEventHook } from "@vueuse/core";
 import { onMounted, onUnmounted } from "vue";
 
-import { CrawlJobSchema, type CrawlJob } from "@/utils/types";
+import {
+  CrawlJobSchema,
+  ProgressEventSchema,
+  type CrawlJob,
+  type ProgressEvent,
+} from "@/utils/types";
 
 import { useAuthedFetch } from "./useFetch";
 
@@ -10,8 +15,9 @@ const RETRY_DELAY_MS = 3_000;
 export const useCrawlJobEvents = () => {
   const fetch = useAuthedFetch();
 
-  const startedHook = createEventHook<CrawlJob>();
+  const startedHook = createEventHook();
   const updatedHook = createEventHook<CrawlJob>();
+  const progressHook = createEventHook<ProgressEvent>();
   const errorHook = createEventHook<unknown>();
 
   let active = true;
@@ -20,13 +26,13 @@ export const useCrawlJobEvents = () => {
   const handleEvent = async (eventName: string, data: string) => {
     if (eventName === "connected") return;
 
-    const job = CrawlJobSchema.parse(JSON.parse(data));
-
     switch (eventName) {
       case "crawl-job-started":
-        return startedHook.trigger(job);
+        return startedHook.trigger();
       case "crawl-job-updated":
-        return updatedHook.trigger(job);
+        return updatedHook.trigger(CrawlJobSchema.parse(JSON.parse(data)));
+      case "crawl-job-progress":
+        return progressHook.trigger(ProgressEventSchema.parse(JSON.parse(data)));
       default:
         console.warn(`Unknown event: ${eventName}`);
     }
@@ -56,17 +62,16 @@ export const useCrawlJobEvents = () => {
         buffer = parts.pop() || "";
 
         for (const rawEvent of parts) {
-          let eventName = "message";
+          let eventName;
           const dataLines: string[] = [];
 
           for (const line of rawEvent.split(/\r?\n/)) {
             if (line.startsWith("event:")) eventName = line.slice(6).trim();
             else if (line.startsWith("data:")) dataLines.push(line.slice(5).trimStart());
           }
+          if (!eventName) continue;
 
-          if (dataLines.length > 0) {
-            void handleEvent(eventName, dataLines.join("\n"));
-          }
+          void handleEvent(eventName, dataLines.join("\n"));
         }
       }
     } finally {
@@ -100,6 +105,7 @@ export const useCrawlJobEvents = () => {
   return {
     onJobStarted: startedHook.on,
     onJobUpdated: updatedHook.on,
+    onJobProgress: progressHook.on,
     onError: errorHook.on,
   };
 };

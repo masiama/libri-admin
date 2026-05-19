@@ -71,21 +71,23 @@ watch(historyError, (error) => {
   }
 });
 
-const { onJobStarted, onJobUpdated, onError } = useCrawlJobEvents();
+const { onJobStarted, onJobUpdated, onJobProgress, onError } = useCrawlJobEvents();
 
-onJobStarted(() => refetchHistory());
-onJobUpdated((job: CrawlJob) => {
+const updateJobInList = (jobId: number, updateFn: (job: CrawlJob) => void) => {
   const currentPage = data.value;
   if (!currentPage) return;
 
-  const existingIndex = currentPage.content.findIndex((item) => item.id === job.id);
-  if (existingIndex === -1) return;
+  const job = currentPage.content.find((item) => item.id === jobId);
+  if (!job) return;
 
-  data.value = {
-    ...currentPage,
-    content: currentPage.content.map((item, index) => (index === existingIndex ? job : item)),
-  };
-});
+  updateFn(job);
+};
+
+onJobStarted(() => refetchHistory());
+onJobUpdated((job) => updateJobInList(job.id, (item) => Object.assign(item, job)));
+onJobProgress(({ id, booksFound }) =>
+  updateJobInList(id, (item) => (item.booksFound = booksFound)),
+);
 onError(console.error);
 
 const columns: TableColumn<CrawlJob>[] = [

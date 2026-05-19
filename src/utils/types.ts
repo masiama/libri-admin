@@ -50,3 +50,6 @@ export const PurgatoryBookSchema = z
   })
   .strict();
 export type PurgatoryBook = z.infer<typeof PurgatoryBookSchema>;
+
+export const ProgressEventSchema = CrawlJobSchema.pick({ id: true, booksFound: true }).strict();
+export type ProgressEvent = z.infer<typeof ProgressEventSchema>;
