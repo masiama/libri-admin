@@ -63,6 +63,11 @@ const {
   error: historyError,
   execute: refetchHistory,
 } = usePagination("/admin/crawl", CrawlJobSchema, { sorting });
+const jobs = ref<CrawlJob[]>([]);
+
+watch(data, (newData) => {
+  if (newData) jobs.value = [...newData.content];
+});
 
 watch(historyError, (error) => {
   if (error && error.name !== "AbortError") {
@@ -74,13 +79,8 @@ watch(historyError, (error) => {
 const { onJobStarted, onJobUpdated, onJobProgress, onError } = useCrawlJobEvents();
 
 const updateJobInList = (jobId: number, updateFn: (job: CrawlJob) => void) => {
-  const currentPage = data.value;
-  if (!currentPage) return;
-
-  const job = currentPage.content.find((item) => item.id === jobId);
-  if (!job) return;
-
-  updateFn(job);
+  const job = jobs.value.find((item) => item.id === jobId);
+  if (job) updateFn(job);
 };
 
 onJobStarted(() => refetchHistory());
@@ -152,7 +152,7 @@ const expandRow = (_: Event, row: Row<CrawlJob>) =>
 
     <UTable
       sticky
-      :data="data?.content"
+      :data="jobs"
       :columns="columns"
       :loading="isFetching"
       v-model:sorting="sorting"
