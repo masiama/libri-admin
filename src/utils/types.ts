@@ -34,6 +34,7 @@ export const CrawlJobSchema = z
     status: z.enum(["RUNNING", "SUCCESS", "FAILED", "CANCELLED"]),
     booksFound: z.number(),
     errorMessage: z.string().nullable(),
+    errorCount: z.number(),
   })
   .strict();
 export type CrawlJob = z.infer<typeof CrawlJobSchema>;
@@ -53,3 +54,11 @@ export type PurgatoryBook = z.infer<typeof PurgatoryBookSchema>;
 
 export const ProgressEventSchema = CrawlJobSchema.pick({ id: true, booksFound: true }).strict();
 export type ProgressEvent = z.infer<typeof ProgressEventSchema>;
+
+export const CrawlJobErrorSchema = z.object({
+  id: z.number(),
+  message: z.string(),
+  url: z.string().nullable(),
+  occurredAt: z.iso.datetime({ local: true }).pipe(z.coerce.date()),
+});
+export type CrawlJobError = z.infer<typeof CrawlJobErrorSchema>;

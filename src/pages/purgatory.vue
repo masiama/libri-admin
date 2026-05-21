@@ -77,7 +77,7 @@ watch(data, (newData) => {
 
     <UTable
       sticky
-      :data="data?.content"
+      :data="data?.content ?? []"
       :columns="columns"
       :loading="isFetching"
       v-model:sorting="sorting"
@@ -140,6 +140,7 @@ watch(data, (newData) => {
             icon="i-lucide-external-link"
             :to="row.original.url"
             target="_blank"
+            rel="noopener noreferrer"
             square
             color="neutral"
             variant="ghost"

@@ -122,7 +122,7 @@ const columns: TableColumn<Book>[] = [
 
     <UTable
       sticky
-      :data="data?.content"
+      :data="data?.content ?? []"
       :columns="columns"
       :loading="isFetching"
       v-model:sorting="sorting"

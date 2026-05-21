@@ -55,7 +55,7 @@ const startSelected = () =>
     selectedSources.value = [];
   });
 
-const sorting = ref<SortingState>([{ id: "startedAt", desc: true }]);
+const sorting = ref<SortingState>([{ id: "id", desc: true }]);
 
 const {
   page,
@@ -104,7 +104,12 @@ const columns: TableColumn<CrawlJob>[] = [
   {
     accessorKey: "booksFound",
     header: "Books Found",
-    meta: { class: { th: "w-32 text-center", td: "text-center" } },
+    meta: { class: { th: "w-40 text-center", td: "text-center" } },
+  },
+  {
+    accessorKey: "errorCount",
+    header: "Errors",
+    meta: { class: { th: "w-30 text-center", td: "text-center" } },
   },
   {
     accessorKey: "status",
@@ -210,18 +215,23 @@ const expandRow = (_: Event, row: Row<CrawlJob>) =>
         <span v-if="row.original.finishedAt">
           {{ formatDate(row.original.finishedAt, "HH:mm:ss DD.MM.YYYY") }}
         </span>
-        <UIcon v-else name="i-lucide-minus" class="mx-auto" />
+        <UIcon v-else name="i-lucide-minus" class="text-muted mx-auto" />
       </template>
 
       <template #duration-cell="{ row }">
         <span v-if="row.original.finishedAt">
           {{ formatDuration(row.original.startedAt, row.original.finishedAt) }}
         </span>
-        <UIcon v-else name="i-lucide-minus" class="mx-auto" />
+        <UIcon v-else name="i-lucide-minus" class="text-muted mx-auto" />
       </template>
 
       <template #sourceName-cell="{ row }">
         <UBadge variant="subtle" color="neutral">{{ row.getValue("sourceName") }}</UBadge>
+      </template>
+
+      <template #errorCount-cell="{ row }">
+        <CrawlJobErrorsButton v-if="row.original.errorCount > 0" :job="row.original" />
+        <UIcon v-else name="i-lucide-minus" class="text-muted mx-auto" />
       </template>
 
       <template #status-cell="{ row }">

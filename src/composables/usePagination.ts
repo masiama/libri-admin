@@ -20,7 +20,7 @@ const PaginatedResponseSchema = <T>(itemSchema: z.ZodSchema<T>) =>
     }),
   });
 
-type PaginatedResponse<T> = z.infer<ReturnType<typeof PaginatedResponseSchema<T>>>;
+export type PaginatedResponse<T> = z.infer<ReturnType<typeof PaginatedResponseSchema<T>>>;
 
 export const usePagination = <T>(path: string, schema: z.ZodSchema<T>, options: Options = {}) => {
   const page = ref(1);
@@ -29,9 +29,10 @@ export const usePagination = <T>(path: string, schema: z.ZodSchema<T>, options: 
     const params = new URLSearchParams();
 
     params.append("page", `${page.value - 1}`);
-    if (options.sorting?.value[0]) {
-      const sorting = options.sorting.value[0];
-      params.append("sort", `${sorting.id},${sorting.desc ? "desc" : "asc"}`);
+    if (options.sorting) {
+      for (const sort of options.sorting.value) {
+        params.append("sort", `${sort.id},${sort.desc ? "desc" : "asc"}`);
+      }
     }
     if (options.filter?.value) {
       params.append("filter", options.filter.value);

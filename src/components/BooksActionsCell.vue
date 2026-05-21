@@ -22,6 +22,7 @@ defineEmits<{ (e: "refetchBooks"): Promise<void> }>();
       icon="i-lucide-external-link"
       :to="book.url"
       target="_blank"
+      rel="noopener noreferrer"
       square
       color="neutral"
       variant="ghost"
