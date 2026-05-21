@@ -31,7 +31,7 @@ export const CrawlJobSchema = z
     sourceName: z.string(),
     startedAt: z.iso.datetime({ local: true }).pipe(z.coerce.date()),
     finishedAt: z.iso.datetime({ local: true }).pipe(z.coerce.date()).nullable(),
-    status: z.enum(["RUNNING", "SUCCESS", "FAILED"]),
+    status: z.enum(["RUNNING", "SUCCESS", "FAILED", "CANCELLED"]),
     booksFound: z.number(),
     errorMessage: z.string().nullable(),
   })

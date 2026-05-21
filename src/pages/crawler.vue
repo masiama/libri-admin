@@ -6,6 +6,7 @@ import { storeToRefs } from "pinia";
 import { ref, watch } from "vue";
 
 import AppLayout from "@/components/AppLayout.vue";
+import CrawlJobCancelButton from "@/components/CrawlJobCancelButton.vue";
 import CrawlJobStatus from "@/components/CrawlJobStatus.vue";
 import { useCrawlJobEvents } from "@/composables/useCrawlJobEvents";
 import { useAuthedFetch } from "@/composables/useFetch";
@@ -111,6 +112,7 @@ const columns: TableColumn<CrawlJob>[] = [
     meta: { class: { th: "w-32 text-center", td: "text-center" } },
   },
   { accessorKey: "errorMessage", header: "Error", meta: { class: { td: "truncate" } } },
+  { id: "actions", meta: { class: { th: "w-16", td: "py-0" } } },
 ];
 
 const expandRow = (_: Event, row: Row<CrawlJob>) =>
@@ -224,6 +226,10 @@ const expandRow = (_: Event, row: Row<CrawlJob>) =>
 
       <template #status-cell="{ row }">
         <CrawlJobStatus :row="row" />
+      </template>
+
+      <template #actions-cell="{ row }">
+        <CrawlJobCancelButton v-if="row.original.status === 'RUNNING'" :job="row.original" />
       </template>
 
       <template #expanded="{ row }">
