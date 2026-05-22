@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { TableColumn } from "@nuxt/ui";
 import { type Row, type SortingState } from "@tanstack/table-core";
-import { formatDate } from "@vueuse/core";
+import { formatDate, useNow } from "@vueuse/core";
 import { storeToRefs } from "pinia";
 import { ref, watch } from "vue";
 
@@ -19,6 +19,7 @@ import { CrawlJobSchema, type CrawlJob } from "@/utils/types";
 const CRAWLER_START_ERROR_MESSAGE = "Failed to start crawler.";
 const CRAWLERS_START_ERROR_MESSAGE = "Failed to start crawlers.";
 
+const now = useNow();
 const toast = useToast();
 const fetch = useAuthedFetch();
 const { isOnline } = storeToRefs(useApiStatusStore());
@@ -219,10 +220,7 @@ const expandRow = (_: Event, row: Row<CrawlJob>) =>
       </template>
 
       <template #duration-cell="{ row }">
-        <span v-if="row.original.finishedAt">
-          {{ formatDuration(row.original.startedAt, row.original.finishedAt) }}
-        </span>
-        <UIcon v-else name="i-lucide-minus" class="text-muted mx-auto" />
+        {{ formatDuration(row.original.startedAt, row.original.finishedAt ?? now) }}
       </template>
 
       <template #sourceName-cell="{ row }">
