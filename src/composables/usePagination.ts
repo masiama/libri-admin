@@ -7,6 +7,7 @@ import { useFetch } from "./useFetch";
 type Options = {
   sorting?: Ref<SortingState>;
   filter?: Ref<string>;
+  size?: number;
 };
 
 const PaginatedResponseSchema = <T>(itemSchema: z.ZodSchema<T>) =>
@@ -29,6 +30,7 @@ export const usePagination = <T>(path: string, schema: z.ZodSchema<T>, options: 
     const params = new URLSearchParams();
 
     params.append("page", `${page.value - 1}`);
+    params.append("size", `${options.size ?? 20}`);
     if (options.sorting) {
       for (const sort of options.sorting.value) {
         params.append("sort", `${sort.id},${sort.desc ? "desc" : "asc"}`);
