@@ -8,6 +8,7 @@ import { ref, useTemplateRef, watch } from "vue";
 import AppLayout from "@/components/AppLayout.vue";
 import ApprovePurgatoryBookButton from "@/components/ApprovePurgatoryBookButton.vue";
 import DeletePurgatoryBookButton from "@/components/DeletePurgatoryBookButton.vue";
+import SortableColumnHeader from "@/components/SortableColumnHeader.vue";
 import { usePagination } from "@/composables/usePagination";
 import { useApiStatusStore } from "@/stores/apiStatus";
 import { showErrorToast } from "@/utils";

@@ -9,6 +9,7 @@ import AppLayout from "@/components/AppLayout.vue";
 import BooksActionsCell from "@/components/BooksActionsCell.vue";
 import BookUpsertSlideover from "@/components/BookUpsertSlideover.vue";
 import BulkDeleteBooksButton from "@/components/BulkDeleteBooksButton.vue";
+import SortableColumnHeader from "@/components/SortableColumnHeader.vue";
 import { usePagination } from "@/composables/usePagination";
 import { useApiStatusStore } from "@/stores/apiStatus";
 import { showErrorToast } from "@/utils";

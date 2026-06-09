@@ -9,6 +9,8 @@ import { catchPromiseError, showErrorToast, showSuccessToast } from "@/utils";
 import { cloneBook, createEmptyBook } from "@/utils/book";
 import { type Book } from "@/utils/types";
 
+import BookEditForm from "./BookEditForm.vue";
+
 const props = defineProps<{ book?: Book }>();
 const emit = defineEmits<{ (e: "saved"): Promise<void> }>();
 

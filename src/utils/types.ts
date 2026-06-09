@@ -1,6 +1,6 @@
 import * as z from "zod";
 
-export const SourceSchema = z.object({ name: z.string(), enabled: z.boolean() }).strict();
+const SourceSchema = z.object({ name: z.string(), enabled: z.boolean() }).strict();
 export type Source = z.infer<typeof SourceSchema>;
 export const SourcesSchema = z.array(SourceSchema);
 
@@ -10,8 +10,6 @@ export const BarcodeSchema = z
     type: z.string().nonempty("Barcode type is required"),
   })
   .strict();
-export type Barcode = z.infer<typeof BarcodeSchema>;
-export const BarcodesSchema = z.array(BarcodeSchema);
 
 export const BookSchema = z
   .object({
