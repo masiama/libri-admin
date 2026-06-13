@@ -1,5 +1,5 @@
 import * as Sentry from "@sentry/vue";
-import { createEventHook } from "@vueuse/core";
+import { createEventHook, useEventListener } from "@vueuse/core";
 import { onMounted, onUnmounted } from "vue";
 
 import {
@@ -94,6 +94,9 @@ export const useCrawlJobEvents = () => {
         await fetch("/admin/crawl/events", { signal: abortController.signal }).then(consumeStream);
       } catch (error) {
         if (!active || abortController.signal.aborted) return;
+        // Suppress browser-native stream errors caused by page unload/refresh
+        // tearing down the fetch connection before onUnmounted can abort it.
+        if (error instanceof TypeError && error.message.includes("Error in input stream")) return;
         void errorHook.trigger(error);
       }
 
@@ -103,6 +106,13 @@ export const useCrawlJobEvents = () => {
   };
 
   onMounted(connect);
+
+  useEventListener(window, "beforeunload", () => {
+    active = false;
+  });
+  useEventListener(window, "pageshow", () => {
+    active = true;
+  });
 
   onUnmounted(() => {
     active = false;
