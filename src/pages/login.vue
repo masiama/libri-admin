@@ -2,8 +2,6 @@
 import { SignInButton } from "@clerk/vue";
 import { useRoute } from "vue-router";
 
-import AppLayout from "@/components/AppLayout.vue";
-
 const route = useRoute();
 const redirectPath = (route.query.redirect as string) || "/";
 </script>

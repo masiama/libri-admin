@@ -1,8 +1,5 @@
 <script setup lang="ts">
-import BookUpsertSlideover from "@/components/BookUpsertSlideover.vue";
 import type { Book } from "@/utils/types";
-
-import DeleteBookButton from "./DeleteBookButton.vue";
 
 defineProps<{ book: Book }>();
 defineEmits<{ (e: "refetchBooks"): Promise<void> }>();

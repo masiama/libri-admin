@@ -6,11 +6,6 @@ import { formatDate, useNow } from "@vueuse/core";
 import { storeToRefs } from "pinia";
 import { ref, watch } from "vue";
 
-import AppLayout from "@/components/AppLayout.vue";
-import CrawlJobCancelButton from "@/components/CrawlJobCancelButton.vue";
-import CrawlJobErrorsButton from "@/components/CrawlJobErrorsButton.vue";
-import CrawlJobStatus from "@/components/CrawlJobStatus.vue";
-import SortableColumnHeader from "@/components/SortableColumnHeader.vue";
 import { useCrawlJobEvents } from "@/composables/useCrawlJobEvents";
 import { useAuthedFetch } from "@/composables/useFetch";
 import { usePagination } from "@/composables/usePagination";

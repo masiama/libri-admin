@@ -6,8 +6,6 @@ import { type PaginatedResponse } from "@/composables/usePagination";
 import { useApiStatusStore } from "@/stores/apiStatus";
 import { type CrawlJob, type CrawlJobError } from "@/utils/types";
 
-import CrawlJobErrorsTable from "./CrawlJobErrorsTable.vue";
-
 const props = defineProps<{ job: CrawlJob }>();
 
 const { isOnline } = storeToRefs(useApiStatusStore());
