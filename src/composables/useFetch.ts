@@ -42,6 +42,7 @@ export const useFetch = () => {
           return ctx;
         },
         onFetchError(ctx) {
+          if (ctx.error instanceof DOMException && ctx.error.name === "AbortError") return ctx;
           Sentry.captureException(
             ctx.error ?? new Error(`Fetch failed: HTTP ${ctx.response?.status ?? "unknown"}`),
             { extra: { status: ctx.response?.status, url: ctx.response?.url } },
