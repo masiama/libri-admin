@@ -1,3 +1,4 @@
+import * as Sentry from "@sentry/vue";
 import { createEventHook } from "@vueuse/core";
 import { onMounted, onUnmounted } from "vue";
 
@@ -24,6 +25,8 @@ export const useCrawlJobEvents = () => {
   let abortController: AbortController | null = null;
 
   const handleEvent = async (eventName: string, data: string) => {
+    Sentry.metrics.count("sse_event_received", 1, { attributes: { event: eventName } });
+    Sentry.logger.debug(`Received event: ${eventName}`, { tags: { eventName }, extra: { data } });
     if (eventName === "connected") return;
 
     switch (eventName) {
@@ -34,7 +37,11 @@ export const useCrawlJobEvents = () => {
       case "crawl-job-progress":
         return progressHook.trigger(ProgressEventSchema.parse(JSON.parse(data)));
       default:
-        console.warn(`Unknown event: ${eventName}`);
+        Sentry.captureMessage(`Unknown event: ${eventName}`, {
+          level: "warning",
+          tags: { eventName },
+          extra: { data },
+        });
     }
   };
 

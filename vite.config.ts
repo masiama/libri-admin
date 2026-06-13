@@ -1,6 +1,7 @@
 import { fileURLToPath, URL } from "node:url";
 
 import ui from "@nuxt/ui/vite";
+import { sentryVitePlugin } from "@sentry/vite-plugin";
 import vue from "@vitejs/plugin-vue";
 import { defineConfig, loadEnv } from "vite";
 import vueDevTools from "vite-plugin-vue-devtools";
@@ -29,6 +30,13 @@ export default defineConfig(({ mode }) => {
         },
       }),
       svgLoader(),
+      sentryVitePlugin({
+        org: "libri",
+        project: "libri-admin",
+        authToken: process.env.SENTRY_AUTH_TOKEN,
+        telemetry: false,
+        sourcemaps: { filesToDeleteAfterUpload: ["./dist/**/*.map"] },
+      }),
     ],
     resolve: {
       alias: {
@@ -48,6 +56,9 @@ export default defineConfig(({ mode }) => {
     preview: {
       port: 3000,
       open: true,
+    },
+    build: {
+      sourcemap: "hidden",
     },
   };
 });

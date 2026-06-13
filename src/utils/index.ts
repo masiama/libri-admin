@@ -1,3 +1,5 @@
+import * as Sentry from "@sentry/vue";
+
 export const API_BASE_URL = "/api/v1";
 
 export const createObjectUrl = (file: File) => URL.createObjectURL(file);
@@ -9,7 +11,7 @@ export const showSuccessToast = (toast: ReturnType<typeof useToast>, description
 
 export const catchPromiseError =
   (toast: ReturnType<typeof useToast>, defaultMessage: string) => (error: unknown) => {
-    console.error(error);
+    Sentry.captureException(error, { tags: { context: "promiseError" } });
     showErrorToast(toast, error instanceof Error ? error.message : defaultMessage);
   };
 

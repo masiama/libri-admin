@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import type { TableColumn } from "@nuxt/ui";
+import * as Sentry from "@sentry/vue";
 import type { SortingState } from "@tanstack/table-core";
 import { refDebounced } from "@vueuse/core";
 import { storeToRefs } from "pinia";
@@ -36,7 +37,7 @@ const {
 watch(booksError, (error) => {
   if (error && error.name !== "AbortError") {
     showErrorToast(toast, "An error occurred while fetching books.");
-    console.error(error);
+    Sentry.captureException(error, { tags: { context: "fetchBooks" } });
   }
 });
 

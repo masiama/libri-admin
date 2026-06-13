@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import type { TableColumn } from "@nuxt/ui";
+import * as Sentry from "@sentry/vue";
 import { type Row, type SortingState } from "@tanstack/table-core";
 import { formatDate, useNow } from "@vueuse/core";
 import { storeToRefs } from "pinia";
@@ -76,7 +77,7 @@ watch(data, (newData) => {
 watch(historyError, (error) => {
   if (error && error.name !== "AbortError") {
     showErrorToast(toast, "An error occurred while fetching crawl history.");
-    console.error(error);
+    Sentry.captureException(error, { tags: { context: "fetchCrawlHistory" } });
   }
 });
 
@@ -92,7 +93,7 @@ onJobUpdated((job) => updateJobInList(job.id, (item) => Object.assign(item, job)
 onJobProgress(({ id, booksFound }) =>
   updateJobInList(id, (item) => (item.booksFound = booksFound)),
 );
-onError(console.error);
+onError((error) => Sentry.captureException(error, { tags: { context: "crawlJobEvents" } }));
 
 const columns: TableColumn<CrawlJob>[] = [
   { id: "expand", meta: { class: { th: "w-16", td: "py-0" } } },
