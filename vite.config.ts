@@ -33,9 +33,10 @@ export default defineConfig(({ mode }) => {
       sentryVitePlugin({
         org: "libri",
         project: "libri-admin",
-        authToken: process.env.SENTRY_AUTH_TOKEN,
+        authToken: env.SENTRY_AUTH_TOKEN,
         telemetry: false,
         sourcemaps: { filesToDeleteAfterUpload: ["./dist/**/*.map"] },
+        disable: !env.SENTRY_AUTH_TOKEN,
       }),
     ],
     resolve: {
