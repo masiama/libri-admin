@@ -50,5 +50,6 @@ declare module 'vue' {
     USelect: typeof import('./node_modules/.pnpm/@nuxt+ui@4.8.2_@internationalized+date@3.12.2_@internationalized+number@3.6.7_@tiptap+e_fffde12c052a88aae3f39332513dd1e6/node_modules/@nuxt/ui/dist/runtime/components/Select.vue')['default']
     USlideover: typeof import('./node_modules/.pnpm/@nuxt+ui@4.8.2_@internationalized+date@3.12.2_@internationalized+number@3.6.7_@tiptap+e_fffde12c052a88aae3f39332513dd1e6/node_modules/@nuxt/ui/dist/runtime/components/Slideover.vue')['default']
     UTable: typeof import('./node_modules/.pnpm/@nuxt+ui@4.8.2_@internationalized+date@3.12.2_@internationalized+number@3.6.7_@tiptap+e_fffde12c052a88aae3f39332513dd1e6/node_modules/@nuxt/ui/dist/runtime/components/Table.vue')['default']
+    UTooltip: typeof import('./node_modules/.pnpm/@nuxt+ui@4.8.2_@internationalized+date@3.12.2_@internationalized+number@3.6.7_@tiptap+e_fffde12c052a88aae3f39332513dd1e6/node_modules/@nuxt/ui/dist/runtime/components/Tooltip.vue')['default']
   }
 }

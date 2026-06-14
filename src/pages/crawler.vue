@@ -2,9 +2,9 @@
 import type { TableColumn } from "@nuxt/ui";
 import * as Sentry from "@sentry/vue";
 import { type Row, type SortingState } from "@tanstack/table-core";
-import { formatDate, useNow } from "@vueuse/core";
+import { formatDate, useNow, useWakeLock } from "@vueuse/core";
 import { storeToRefs } from "pinia";
-import { ref, watch } from "vue";
+import { computed, onUnmounted, reactive, ref, watch } from "vue";
 
 import { useCrawlJobEvents } from "@/composables/useCrawlJobEvents";
 import { useAuthedFetch } from "@/composables/useFetch";
@@ -54,6 +54,25 @@ const startSelected = () =>
     selectedSources.value = [];
   });
 
+const wakeLock = reactive(useWakeLock());
+const releaseWakeLock = () => {
+  if (wakeLock.isSupported && wakeLock.isActive) {
+    wakeLock.release().catch(catchPromiseError(toast, "Failed to release wake lock."));
+  }
+};
+const requestWakeLock = () => {
+  if (wakeLock.isSupported && !wakeLock.isActive) {
+    wakeLock.request("screen").catch(catchPromiseError(toast, "Failed to acquire wake lock."));
+  }
+};
+const syncWakeLock = () => {
+  if (hasRunningJobs.value) {
+    requestWakeLock();
+  } else {
+    releaseWakeLock();
+  }
+};
+
 const sorting = ref<SortingState>([{ id: "id", desc: true }]);
 
 const {
@@ -64,9 +83,13 @@ const {
   execute: refetchHistory,
 } = usePagination("/admin/crawl", CrawlJobSchema, { sorting });
 const jobs = ref<CrawlJob[]>([]);
+const hasRunningJobs = computed(() => jobs.value.some((j) => j.status === "RUNNING"));
 
 watch(data, (newData) => {
-  if (newData) jobs.value = [...newData.content];
+  if (newData) {
+    jobs.value = [...newData.content];
+    syncWakeLock();
+  }
 });
 
 watch(historyError, (error) => {
@@ -83,12 +106,21 @@ const updateJobInList = (jobId: number, updateFn: (job: CrawlJob) => void) => {
   if (job) updateFn(job);
 };
 
-onJobStarted(() => refetchHistory());
-onJobUpdated((job) => updateJobInList(job.id, (item) => Object.assign(item, job)));
-onJobProgress(({ id, booksFound }) =>
-  updateJobInList(id, (item) => (item.booksFound = booksFound)),
-);
+onJobStarted(() => {
+  refetchHistory();
+  syncWakeLock();
+});
+onJobUpdated((job) => {
+  updateJobInList(job.id, (item) => Object.assign(item, job));
+  syncWakeLock();
+});
+onJobProgress(({ id, booksFound }) => {
+  updateJobInList(id, (item) => (item.booksFound = booksFound));
+  syncWakeLock();
+});
 onError((error) => Sentry.captureException(error, { tags: { context: "crawlJobEvents" } }));
+
+onUnmounted(() => releaseWakeLock());
 
 const columns: TableColumn<CrawlJob>[] = [
   { id: "expand", meta: { class: { th: "w-16", td: "py-0" } } },
@@ -154,6 +186,14 @@ const expandRow = (_: Event, row: Row<CrawlJob>) =>
         @click="startAll"
         loading-auto
       />
+
+      <UTooltip
+        v-if="wakeLock.isSupported"
+        :text="wakeLock.isActive ? 'Wake Lock Active' : 'Wake Lock Inactive'"
+      >
+        <UIcon v-if="wakeLock.isActive" name="i-lucide-eye" class="text-primary size-5" />
+        <UIcon v-else name="i-lucide-eye-off" class="text-muted size-5" />
+      </UTooltip>
     </template>
 
     <UTable
