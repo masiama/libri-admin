@@ -2,6 +2,7 @@ import { useAuth } from "@clerk/vue";
 import * as Sentry from "@sentry/vue";
 import { createFetch, until, useFetch as useVUFetch } from "@vueuse/core";
 
+import { env } from "@/config";
 import { API_BASE_URL } from "@/utils";
 
 let _apiFetch: typeof useVUFetch | null = null;
@@ -21,7 +22,7 @@ export const useFetch = () => {
             return;
           }
 
-          const token = await getToken.value({ template: import.meta.env.VITE_CLERK_JWT_TEMPLATE });
+          const token = await getToken.value({ template: env.clerkJwtTemplate });
           if (!token) {
             cancel();
             return;
@@ -62,7 +63,7 @@ export const useAuthedFetch = () => {
     await until(isLoaded).toBe(true);
     if (!isSignedIn.value) throw new Error("User is not signed in");
 
-    const token = await getToken.value({ template: import.meta.env.VITE_CLERK_JWT_TEMPLATE });
+    const token = await getToken.value({ template: env.clerkJwtTemplate });
     if (!token) throw new Error("Failed to get auth token");
 
     const headers = new Headers(init?.headers);

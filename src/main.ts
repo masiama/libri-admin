@@ -9,8 +9,9 @@ import { createRouter, createWebHistory } from "vue-router";
 import { routes } from "vue-router/auto-routes";
 
 import App from "./App.vue";
+import { env } from "./config.ts";
 
-const PUBLISHABLE_KEY = import.meta.env.VITE_CLERK_PUBLISHABLE_KEY;
+const PUBLISHABLE_KEY = env.clerkPublishableKey;
 
 if (!PUBLISHABLE_KEY) {
   throw new Error("Add your Clerk Publishable Key to the .env file");
@@ -38,7 +39,7 @@ const app = createApp(App);
 
 Sentry.init({
   app,
-  dsn: import.meta.env.VITE_SENTRY_DSN,
+  dsn: env.sentryDsn,
   dataCollection: { userInfo: false },
   integrations: [Sentry.browserTracingIntegration({ router })],
   tracesSampleRate: import.meta.env.PROD ? 0.1 : 1.0,

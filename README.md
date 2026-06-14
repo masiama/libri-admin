@@ -36,6 +36,8 @@ Available variables:
 VITE_CLERK_PUBLISHABLE_KEY=pk_***
 VITE_CLERK_JWT_TEMPLATE=jwt-admin
 VITE_API_BASE=http://localhost:8080
+VITE_SENTRY_DSN=https://****@****.ingest.de.sentry.io/****
+SENTRY_AUTH_TOKEN=sntrys_****
 ```
 
 Notes:
