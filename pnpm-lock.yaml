@@ -9,8 +9,8 @@ importers:
   .:
     dependencies:
       '@clerk/vue':
-        specifier: ^2.4.2
-        version: 2.4.2(vue@3.5.38(typescript@6.0.3))
+        specifier: ^2.4.4
+        version: 2.4.4(vue@3.5.38(typescript@6.0.3))
       '@nuxt/ui':
         specifier: ^4.8.2
         version: 4.8.2(@internationalized/date@3.12.2)(@internationalized/number@3.6.7)(@tiptap/extensions@3.26.1(@tiptap/core@3.26.1(@tiptap/pm@3.26.1))(@tiptap/pm@3.26.1))(@tiptap/y-tiptap@3.0.2(prosemirror-model@1.25.8)(prosemirror-state@1.4.4)(prosemirror-view@1.41.9)(y-protocols@1.0.7(yjs@13.6.30))(yjs@13.6.30))(embla-carousel@8.6.0)(tailwindcss@4.3.1)(typescript@6.0.3)(vite@8.0.16(@types/node@25.9.3)(esbuild@0.27.7)(jiti@2.7.0)(yaml@2.9.0))(vue-router@5.1.0(@vue/compiler-sfc@3.5.38)(pinia@3.0.4(typescript@6.0.3)(vue@3.5.38(typescript@6.0.3)))(vite@8.0.16(@types/node@25.9.3)(esbuild@0.27.7)(jiti@2.7.0)(yaml@2.9.0))(vue@3.5.38(typescript@6.0.3)))(vue@3.5.38(typescript@6.0.3))(yjs@13.6.30)(zod@4.4.3)
@@ -259,8 +259,8 @@ packages:
     resolution: {integrity: sha512-CuNiSqg7+e1cO/GjffyMOm5Tt2jUF9CWHHnvQ/UkqvtkGfHdgwEC0wpmq7fkN3gxwpRnrAN0WzO3vREKmNolMQ==}
     engines: {node: '>=18'}
 
-  '@clerk/shared@4.17.1':
-    resolution: {integrity: sha512-9Ej2bLA7pWY1e07/PHmPNtQwiV1594rwacNYbppoDUPq9yRkBRZ+pDcpySkfpokS5YXvOUv6aFoPPbEMbQUVgw==}
+  '@clerk/shared@4.20.0':
+    resolution: {integrity: sha512-5t3YEnjwEwaect59N0Ycb5aDBbVGe3hICmy21X+n00IR1skmSTXPmPk/67bTktgEbGHxot2RGqhQbi2bFQV6AA==}
     engines: {node: '>=20.9.0'}
     peerDependencies:
       react: ^18.0.0 || ~19.0.3 || ~19.1.4 || ~19.2.3 || ~19.3.0-0
@@ -271,8 +271,8 @@ packages:
       react-dom:
         optional: true
 
-  '@clerk/vue@2.4.2':
-    resolution: {integrity: sha512-WwyAC+OgrlQn5ZobpA83hNWvoLsMmB5nFOEB1hVulk4fzeO2PnkB68pFnEoa+0052nbi8COmhZUCUohEaIEd+g==}
+  '@clerk/vue@2.4.4':
+    resolution: {integrity: sha512-jF11oS4MIw5ObjHEABu6MYALSACqoeVJZv3KK5zD8ICzO2eFLAMFSHmdDm+pG+SQO7ZgrUPPl3i7puRggbdCvQ==}
     engines: {node: '>=20.9.0'}
     peerDependencies:
       vue: ^3.2.0
@@ -3374,16 +3374,16 @@ snapshots:
     dependencies:
       fontkitten: 1.0.3
 
-  '@clerk/shared@4.17.1':
+  '@clerk/shared@4.20.0':
     dependencies:
       '@tanstack/query-core': 5.101.0
       dequal: 2.0.3
       glob-to-regexp: 0.4.1
       js-cookie: 3.0.7
 
-  '@clerk/vue@2.4.2(vue@3.5.38(typescript@6.0.3))':
+  '@clerk/vue@2.4.4(vue@3.5.38(typescript@6.0.3))':
     dependencies:
-      '@clerk/shared': 4.17.1
+      '@clerk/shared': 4.20.0
       vue: 3.5.38(typescript@6.0.3)
     transitivePeerDependencies:
       - react
