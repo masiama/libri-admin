@@ -34,6 +34,14 @@ watch(
   () => [book.value.isbn, bookImage.value],
   () => (imageLoadFailed.value = false),
 );
+
+const removeBarcode = (index: number) => {
+  book.value.barcodes = book.value.barcodes.filter((_, i) => i !== index);
+};
+
+const addBarcode = () => {
+  book.value.barcodes.push({ type: "", value: "" });
+};
 </script>
 
 <template>
@@ -107,7 +115,7 @@ watch(
                   color="neutral"
                   variant="subtle"
                   icon="i-lucide-trash"
-                  @click="book.barcodes = book.barcodes.filter((_, i) => i !== index)"
+                  @click="() => removeBarcode(index)"
                 />
               </UFieldGroup>
             </UFormField>
@@ -117,7 +125,7 @@ watch(
       <UButton
         color="primary"
         variant="outline"
-        @click="book.barcodes.push({ type: '', value: '' })"
+        @click="addBarcode"
         label="Add Barcode"
         icon="i-lucide-plus"
       />

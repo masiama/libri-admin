@@ -30,6 +30,10 @@ const modalTitle = computed(() =>
     : `Delete ${selectionLabel.value} and their cover images?`,
 );
 
+const closeDelete = () => {
+  deleteOpen.value = false;
+};
+
 const deleteBooks = () => {
   if (!selectedIsbns.value.length) {
     return;
@@ -70,7 +74,7 @@ const deleteBooks = () => {
 
     <template #footer>
       <div class="flex w-full justify-end gap-2">
-        <UButton color="neutral" variant="ghost" label="Cancel" @click="deleteOpen = false" />
+        <UButton color="neutral" variant="ghost" label="Cancel" @click="closeDelete" />
         <UButton
           color="error"
           :loading="deleting"

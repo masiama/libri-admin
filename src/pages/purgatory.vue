@@ -54,6 +54,10 @@ watch(data, (newData) => {
     }
   });
 });
+
+const resetIsbn = (book: PurgatoryBook) => {
+  isbns.value[book.id] = book.invalidIsbn;
+};
 </script>
 
 <template>
@@ -126,7 +130,7 @@ watch(data, (newData) => {
             color="neutral"
             variant="ghost"
             square
-            @click="isbns[row.original.id] = row.original.invalidIsbn"
+            @click="() => resetIsbn(row.original)"
           />
 
           <DeletePurgatoryBookButton

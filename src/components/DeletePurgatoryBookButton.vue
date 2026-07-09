@@ -18,6 +18,10 @@ const toast = useToast();
 const fetch = useAuthedFetch();
 const { isOnline } = storeToRefs(useApiStatusStore());
 
+const closeDelete = () => {
+  deleteOpen.value = false;
+};
+
 const deleteBook = () =>
   fetch(`/admin/purgatory/${props.purgatoryBook.id}`, { method: "DELETE" })
     .then(async (response) => {
@@ -45,7 +49,7 @@ const deleteBook = () =>
 
     <template #footer>
       <div class="flex w-full justify-end gap-2">
-        <UButton color="neutral" variant="ghost" label="Cancel" @click="deleteOpen = false" />
+        <UButton color="neutral" variant="ghost" label="Cancel" @click="closeDelete" />
         <UButton
           color="error"
           label="Delete"

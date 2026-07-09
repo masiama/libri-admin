@@ -18,6 +18,10 @@ const { isOnline } = storeToRefs(useApiStatusStore());
 const cancelOpen = ref(false);
 const cancelRequested = ref(false);
 
+const dismiss = () => {
+  cancelOpen.value = false;
+};
+
 const cancel = () =>
   fetch(`/admin/crawl/${props.job.id}/cancel`, { method: "POST" })
     .then(async (response) => {
@@ -50,7 +54,7 @@ const cancel = () =>
 
     <template #footer>
       <div class="flex w-full justify-end gap-2">
-        <UButton color="neutral" variant="ghost" label="Dismiss" @click="cancelOpen = false" />
+        <UButton color="neutral" variant="ghost" label="Dismiss" @click="dismiss" />
         <UButton color="error" loading-auto label="Stop" :disabled="!isOnline" @click="cancel" />
       </div>
     </template>

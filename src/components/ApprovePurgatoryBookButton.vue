@@ -19,6 +19,10 @@ const toast = useToast();
 const fetch = useAuthedFetch();
 const { isOnline } = storeToRefs(useApiStatusStore());
 
+const closeApprove = () => {
+  approveOpen.value = false;
+};
+
 const approveBook = () =>
   fetch(`/admin/purgatory/${props.purgatoryBook.id}/approve`, {
     method: "POST",
@@ -56,7 +60,7 @@ const approveBook = () =>
 
     <template #footer>
       <div class="flex w-full justify-end gap-2">
-        <UButton color="neutral" variant="ghost" label="Cancel" @click="approveOpen = false" />
+        <UButton color="neutral" variant="ghost" label="Cancel" @click="closeApprove" />
         <UButton
           color="success"
           label="Approve"

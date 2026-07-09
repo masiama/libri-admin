@@ -35,6 +35,10 @@ const submitErrorMessage = computed(() =>
 
 watch(formBook, () => (formBookImage.value = undefined));
 
+const openForm = () => {
+  formBook.value = props.book ? cloneBook(props.book) : createEmptyBook();
+};
+
 const onSubmit = (event: FormSubmitEvent<Book>) => {
   if (!isEditMode.value && !formBookImage.value) {
     showErrorToast(toast, "Cover image is required when creating a book.");
@@ -73,7 +77,7 @@ const onSubmit = (event: FormSubmitEvent<Book>) => {
 
 <template>
   <USlideover :open="!!formBook" @update:open="formBook = $event ? formBook : undefined">
-    <slot @click="formBook = book ? cloneBook(book) : createEmptyBook()" />
+    <slot @click="openForm" />
 
     <template #title>{{ slideoverTitle }}</template>
 
