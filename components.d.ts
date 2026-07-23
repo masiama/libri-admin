@@ -16,7 +16,7 @@ declare module 'vue' {
     BookEditForm: typeof import('./src/components/BookEditForm.vue')['default']
     BooksActionsCell: typeof import('./src/components/BooksActionsCell.vue')['default']
     BookUpsertSlideover: typeof import('./src/components/BookUpsertSlideover.vue')['default']
-    BulkDeleteBooksButton: typeof import('./src/components/BulkDeleteBooksButton.vue')['default']
+    BulkDeleteButton: typeof import('./src/components/BulkDeleteButton.vue')['default']
     CrawlJobCancelButton: typeof import('./src/components/CrawlJobCancelButton.vue')['default']
     CrawlJobErrorsButton: typeof import('./src/components/CrawlJobErrorsButton.vue')['default']
     CrawlJobErrorsTable: typeof import('./src/components/CrawlJobErrorsTable.vue')['default']

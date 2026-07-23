@@ -1,15 +1,18 @@
-<script setup lang="ts">
+<script setup lang="ts" generic="T">
 import { storeToRefs } from "pinia";
 import { computed, ref } from "vue";
 
 import { useAuthedFetch } from "@/composables/useFetch";
 import { useApiStatusStore } from "@/stores/apiStatus";
 import { catchPromiseError, showSuccessToast } from "@/utils";
-import type { Book } from "@/utils/types";
 
-const BOOKS_DELETE_ERROR_MESSAGE = "An error occurred while deleting the selected books.";
-
-const props = defineProps<{ books: Book[] }>();
+const props = defineProps<{
+  items: T[];
+  getKey: (item: T) => string | number;
+  getLabel: (item: T) => string;
+  endpoint: string;
+  bodyKey: string;
+}>();
 const emit = defineEmits<{ (e: "deleted"): void | Promise<void> }>();
 
 const deleteOpen = ref(false);
@@ -19,10 +22,10 @@ const toast = useToast();
 const fetch = useAuthedFetch();
 const { isOnline } = storeToRefs(useApiStatusStore());
 
-const selectedCount = computed(() => props.books.length);
-const selectedIsbns = computed(() => props.books.map((book) => book.isbn));
+const selectedCount = computed(() => props.items.length);
+const selectedKeys = computed(() => props.items.map(props.getKey));
 const selectionLabel = computed(() =>
-  selectedCount.value === 1 ? (props.books[0]?.title ?? "1 book") : `${selectedCount.value} books`,
+  selectedCount.value === 1 ? props.getLabel(props.items[0] as T) : `${selectedCount.value} books`,
 );
 const modalTitle = computed(() =>
   selectedCount.value === 1
@@ -34,31 +37,32 @@ const closeDelete = () => {
   deleteOpen.value = false;
 };
 
-const deleteBooks = () => {
-  if (!selectedIsbns.value.length) {
+const deleteItems = () => {
+  if (!selectedKeys.value.length) {
     return;
   }
 
   const count = selectedCount.value;
+  const deleteErrorMessage = `An error occurred while deleting the selected ${count === 1 ? "book" : "books"}.`;
 
   deleting.value = true;
 
-  return fetch("/admin/books/bulk", {
+  return fetch(props.endpoint, {
     method: "DELETE",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ isbns: selectedIsbns.value }),
+    body: JSON.stringify({ [props.bodyKey]: selectedKeys.value }),
   })
     .then(async (response) => {
       if (!response.ok) {
         const message = await response.text();
-        throw new Error(message || BOOKS_DELETE_ERROR_MESSAGE);
+        throw new Error(message || deleteErrorMessage);
       }
 
       await emit("deleted");
       deleteOpen.value = false;
       showSuccessToast(toast, `${count === 1 ? "Book" : `${count} books`} deleted successfully!`);
     })
-    .catch(catchPromiseError(toast, BOOKS_DELETE_ERROR_MESSAGE))
+    .catch(catchPromiseError(toast, deleteErrorMessage))
     .finally(() => (deleting.value = false));
 };
 </script>
@@ -80,7 +84,7 @@ const deleteBooks = () => {
           :loading="deleting"
           :label="selectedCount === 1 ? 'Delete book' : `Delete ${selectedCount} books`"
           :disabled="!isOnline || !selectedCount"
-          @click="deleteBooks"
+          @click="deleteItems"
         />
       </div>
     </template>

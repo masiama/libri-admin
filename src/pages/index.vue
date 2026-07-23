@@ -101,7 +101,14 @@ const columns: TableColumn<Book>[] = [
         </template>
       </BookUpsertSlideover>
 
-      <BulkDeleteBooksButton :books="selectedBooks" @deleted="refetchBooksAndClearSelection" />
+      <BulkDeleteButton
+        :items="selectedBooks"
+        :get-key="(book) => book.isbn"
+        :get-label="(book) => book.title"
+        endpoint="/admin/books/bulk"
+        body-key="isbns"
+        @deleted="refetchBooksAndClearSelection"
+      />
 
       <UInput
         ref="filter"
