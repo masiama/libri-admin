@@ -16,7 +16,7 @@
     "gen:api": "orval"
   },
   "dependencies": {
-    "@clerk/vue": "^2.5.0",
+    "@clerk/vue": "^2.5.3",
     "@nuxt/ui": "^4.11.0",
     "@sentry/vue": "^10.73.0",
     "@tanstack/table-core": "^8.21.3",
