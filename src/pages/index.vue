@@ -7,6 +7,7 @@ import { storeToRefs } from "pinia";
 import { computed, ref, useTemplateRef, watch } from "vue";
 
 import { usePagination } from "@/composables/usePagination";
+import { deleteBooksBulk, getListBooksUrl } from "@/generated/api/endpoints";
 import { useApiStatusStore } from "@/stores/apiStatus";
 import { showErrorToast } from "@/utils";
 import { BookSchema, type Book } from "@/utils/types";
@@ -27,7 +28,7 @@ const {
   isFetching,
   error: booksError,
   execute: refetchBooks,
-} = usePagination("/books", BookSchema, { filter: debouncedFilter, sorting });
+} = usePagination(getListBooksUrl, BookSchema, { filter: debouncedFilter, sorting });
 
 watch(booksError, (error) => {
   if (error && error.name !== "AbortError") {
@@ -105,8 +106,7 @@ const columns: TableColumn<Book>[] = [
         :items="selectedBooks"
         :get-key="(book) => book.isbn"
         :get-label="(book) => book.title"
-        endpoint="/admin/books/bulk"
-        body-key="isbns"
+        :on-delete="(isbns) => deleteBooksBulk({ isbns })"
         @deleted="refetchBooksAndClearSelection"
       />
 

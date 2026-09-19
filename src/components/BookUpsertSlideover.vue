@@ -3,7 +3,9 @@ import type { FormSubmitEvent } from "@nuxt/ui";
 import { storeToRefs } from "pinia";
 import { computed, ref, useId, watch } from "vue";
 
-import { useAuthedFetch } from "@/composables/useFetch";
+import { customFetch } from "@/api/mutator";
+import { getCreateBookUrl, getUpdateBookUrl } from "@/generated/api/endpoints";
+import type { BookDTO } from "@/generated/api/models";
 import { useApiStatusStore } from "@/stores/apiStatus";
 import { catchPromiseError, showErrorToast, showSuccessToast } from "@/utils";
 import { cloneBook, createEmptyBook } from "@/utils/book";
@@ -13,7 +15,6 @@ const props = defineProps<{ book?: Book }>();
 const emit = defineEmits<{ (e: "saved"): Promise<void> }>();
 
 const toast = useToast();
-const fetch = useAuthedFetch();
 const { isOnline } = storeToRefs(useApiStatusStore());
 
 const formId = useId();
@@ -54,18 +55,11 @@ const onSubmit = (event: FormSubmitEvent<Book>) => {
     formData.append("file", formBookImage.value);
   }
 
-  const requestPath = isEditMode.value ? `/admin/books/${event.data.isbn}` : "/admin/books";
-  const requestMethod = isEditMode.value ? "PUT" : "POST";
+  const url = isEditMode.value ? getUpdateBookUrl(event.data.isbn) : getCreateBookUrl();
+  const method = isEditMode.value ? "PUT" : "POST";
 
-  fetch(requestPath, { method: requestMethod, body: formData })
-    .then(async (response) => {
-      if (!response.ok) {
-        const message = await response.text();
-        throw new Error(message || submitErrorMessage.value);
-      }
-
-      return emit("saved");
-    })
+  customFetch<BookDTO>(url, { method, body: formData })
+    .then(() => emit("saved"))
     .then(() => {
       formBook.value = undefined;
       showSuccessToast(toast, submitSuccessMessage.value);

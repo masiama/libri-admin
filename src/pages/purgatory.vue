@@ -7,6 +7,7 @@ import { storeToRefs } from "pinia";
 import { computed, ref, useTemplateRef, watch } from "vue";
 
 import { usePagination } from "@/composables/usePagination";
+import { deletePurgatoryBooksBulk, getListPurgatoryBooksUrl } from "@/generated/api/endpoints";
 import { useApiStatusStore } from "@/stores/apiStatus";
 import { showErrorToast } from "@/utils";
 import { PurgatoryBookSchema, type PurgatoryBook } from "@/utils/types";
@@ -29,7 +30,10 @@ const {
   isFetching,
   error: booksError,
   execute: refetchPurgatoryBooks,
-} = usePagination("/admin/purgatory", PurgatoryBookSchema, { filter: debouncedFilter, sorting });
+} = usePagination(getListPurgatoryBooksUrl, PurgatoryBookSchema, {
+  filter: debouncedFilter,
+  sorting,
+});
 
 watch(booksError, (error) => {
   if (error && error.name !== "AbortError") {
@@ -107,8 +111,7 @@ const resetIsbn = (book: PurgatoryBook) => {
         :items="selectedBooks"
         :get-key="(book) => book.id"
         :get-label="(book) => book.title"
-        endpoint="/admin/purgatory/bulk"
-        body-key="ids"
+        :on-delete="(ids) => deletePurgatoryBooksBulk({ ids })"
         @deleted="refetchPurgatoryBooksAndClearSelection"
       />
 

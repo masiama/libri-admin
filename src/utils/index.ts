@@ -1,7 +1,5 @@
 import * as Sentry from "@sentry/vue";
 
-export const API_BASE_URL = "/api/v1";
-
 export const createObjectUrl = (file: File) => URL.createObjectURL(file);
 
 export const showErrorToast = (toast: ReturnType<typeof useToast>, description: string) =>

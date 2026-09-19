@@ -1,7 +1,9 @@
+import { useAuth } from "@clerk/vue";
 import * as Sentry from "@sentry/vue";
-import { createEventHook, useEventListener } from "@vueuse/core";
+import { createEventHook, until, useEventListener } from "@vueuse/core";
 import { onMounted, onUnmounted } from "vue";
 
+import { env } from "@/config";
 import {
   CrawlJobSchema,
   ProgressEventSchema,
@@ -9,12 +11,31 @@ import {
   type ProgressEvent,
 } from "@/utils/types";
 
-import { useAuthedFetch } from "./useFetch";
-
 const RETRY_DELAY_MS = 3_000;
+const CRAWL_EVENTS_URL = "/api/v1/admin/crawl/events";
 
 export const useCrawlJobEvents = () => {
-  const fetch = useAuthedFetch();
+  const { getToken, isLoaded, isSignedIn } = useAuth();
+
+  const fetchEvents = async (signal: AbortSignal) => {
+    await until(isLoaded).toBe(true);
+    if (!isSignedIn.value) throw new Error("User is not signed in");
+
+    const token = await getToken.value({ template: env.clerkJwtTemplate });
+    if (!token) throw new Error("Failed to get auth token");
+
+    try {
+      return await fetch(CRAWL_EVENTS_URL, {
+        signal,
+        headers: { Authorization: `Bearer ${token}` },
+      });
+    } catch (error) {
+      if (!(error instanceof Error) || error.name !== "AbortError") {
+        Sentry.captureException(error, { extra: { url: CRAWL_EVENTS_URL } });
+      }
+      throw error;
+    }
+  };
 
   const startedHook = createEventHook();
   const updatedHook = createEventHook<CrawlJob>();
@@ -91,7 +112,7 @@ export const useCrawlJobEvents = () => {
       abortController = new AbortController();
 
       try {
-        await fetch("/admin/crawl/events", { signal: abortController.signal }).then(consumeStream);
+        await fetchEvents(abortController.signal).then(consumeStream);
       } catch (error) {
         if (!active || abortController.signal.aborted) return;
         // Suppress browser-native stream errors caused by page unload/refresh

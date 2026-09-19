@@ -2,7 +2,7 @@
 import { storeToRefs } from "pinia";
 import { ref } from "vue";
 
-import { useAuthedFetch } from "@/composables/useFetch";
+import { cancelCrawlJob } from "@/generated/api/endpoints";
 import { useApiStatusStore } from "@/stores/apiStatus";
 import { catchPromiseError, showSuccessToast } from "@/utils";
 import type { CrawlJob } from "@/utils/types";
@@ -12,7 +12,6 @@ const props = defineProps<{ job: CrawlJob }>();
 const CRAWLER_CANCEL_ERROR_MESSAGE = "Failed to cancel crawler.";
 
 const toast = useToast();
-const fetch = useAuthedFetch();
 const { isOnline } = storeToRefs(useApiStatusStore());
 
 const cancelOpen = ref(false);
@@ -23,12 +22,8 @@ const dismiss = () => {
 };
 
 const cancel = () =>
-  fetch(`/admin/crawl/${props.job.id}/cancel`, { method: "POST" })
-    .then(async (response) => {
-      if (!response.ok) {
-        const message = await response.text();
-        throw new Error(message || CRAWLER_CANCEL_ERROR_MESSAGE);
-      }
+  cancelCrawlJob(props.job.id)
+    .then(() => {
       showSuccessToast(toast, `Crawler cancel requested: ${props.job.sourceName}`);
       cancelOpen.value = false;
       cancelRequested.value = true;

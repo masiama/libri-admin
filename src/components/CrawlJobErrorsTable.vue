@@ -2,12 +2,13 @@
 import { formatDate } from "@vueuse/core";
 
 import { usePagination } from "@/composables/usePagination";
+import { getListCrawlJobErrorsUrl } from "@/generated/api/endpoints";
 import { CrawlJobErrorSchema, type CrawlJob } from "@/utils/types";
 
 const props = defineProps<{ jobId: CrawlJob["id"] }>();
 
 const { page, data, isFetching } = usePagination(
-  `/admin/crawl/${props.jobId}/errors`,
+  (params) => getListCrawlJobErrorsUrl(props.jobId, params),
   CrawlJobErrorSchema,
 );
 

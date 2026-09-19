@@ -2,7 +2,7 @@
 import { storeToRefs } from "pinia";
 import { ref } from "vue";
 
-import { useAuthedFetch } from "@/composables/useFetch";
+import { deletePurgatoryBook } from "@/generated/api/endpoints";
 import { useApiStatusStore } from "@/stores/apiStatus";
 import { catchPromiseError, showSuccessToast } from "@/utils";
 import type { PurgatoryBook } from "@/utils/types";
@@ -15,7 +15,6 @@ const emit = defineEmits<{ (e: "refetchPurgatoryBooks"): Promise<void> }>();
 const deleteOpen = ref(false);
 
 const toast = useToast();
-const fetch = useAuthedFetch();
 const { isOnline } = storeToRefs(useApiStatusStore());
 
 const closeDelete = () => {
@@ -23,15 +22,8 @@ const closeDelete = () => {
 };
 
 const deleteBook = () =>
-  fetch(`/admin/purgatory/${props.purgatoryBook.id}`, { method: "DELETE" })
-    .then(async (response) => {
-      if (!response.ok) {
-        const message = await response.text();
-        throw new Error(message || PURGATORY_BOOK_DELETE_ERROR_MESSAGE);
-      }
-
-      return emit("refetchPurgatoryBooks");
-    })
+  deletePurgatoryBook(props.purgatoryBook.id)
+    .then(() => emit("refetchPurgatoryBooks"))
     .then(() => {
       deleteOpen.value = false;
       showSuccessToast(toast, "Purgatory book deleted successfully!");

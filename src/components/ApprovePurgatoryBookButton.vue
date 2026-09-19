@@ -2,7 +2,7 @@
 import { storeToRefs } from "pinia";
 import { ref } from "vue";
 
-import { useAuthedFetch } from "@/composables/useFetch";
+import { approvePurgatoryBook } from "@/generated/api/endpoints";
 import { useApiStatusStore } from "@/stores/apiStatus";
 import { catchPromiseError, showSuccessToast } from "@/utils";
 import type { PurgatoryBook } from "@/utils/types";
@@ -16,7 +16,6 @@ const emit = defineEmits<{ (e: "refetchPurgatoryBooks"): Promise<void> }>();
 const approveOpen = ref(false);
 
 const toast = useToast();
-const fetch = useAuthedFetch();
 const { isOnline } = storeToRefs(useApiStatusStore());
 
 const closeApprove = () => {
@@ -24,19 +23,8 @@ const closeApprove = () => {
 };
 
 const approveBook = () =>
-  fetch(`/admin/purgatory/${props.purgatoryBook.id}/approve`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ isbn: props.isbn }),
-  })
-    .then(async (response) => {
-      if (!response.ok) {
-        const message = await response.text();
-        throw new Error(message || PURGATORY_BOOK_APPROVE_ERROR_MESSAGE);
-      }
-
-      return emit("refetchPurgatoryBooks");
-    })
+  approvePurgatoryBook(props.purgatoryBook.id, { isbn: props.isbn })
+    .then(() => emit("refetchPurgatoryBooks"))
     .then(() => {
       approveOpen.value = false;
       showSuccessToast(toast, "Purgatory book approved successfully!");

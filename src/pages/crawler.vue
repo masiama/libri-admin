@@ -7,8 +7,12 @@ import { storeToRefs } from "pinia";
 import { computed, onUnmounted, reactive, ref, watch } from "vue";
 
 import { useCrawlJobEvents } from "@/composables/useCrawlJobEvents";
-import { useAuthedFetch } from "@/composables/useFetch";
 import { usePagination } from "@/composables/usePagination";
+import {
+  getListCrawlJobsUrl,
+  triggerAllCrawls,
+  triggerSourceCrawl,
+} from "@/generated/api/endpoints";
 import { useApiStatusStore } from "@/stores/apiStatus";
 import { useSourcesStore } from "@/stores/sources";
 import { catchPromiseError, formatDuration, showErrorToast, showSuccessToast } from "@/utils";
@@ -19,31 +23,22 @@ const CRAWLERS_START_ERROR_MESSAGE = "Failed to start crawlers.";
 
 const now = useNow();
 const toast = useToast();
-const fetch = useAuthedFetch();
 const { isOnline } = storeToRefs(useApiStatusStore());
 const { enabledSourceOptions } = storeToRefs(useSourcesStore());
 
 const selectedSources = ref<string[]>([]);
 
 const startAll = () =>
-  fetch("/admin/crawl", { method: "POST" })
-    .then(async (response) => {
-      if (!response.ok) {
-        const message = await response.text();
-        throw new Error(message || CRAWLERS_START_ERROR_MESSAGE);
-      }
+  triggerAllCrawls()
+    .then(() => {
       showSuccessToast(toast, "Crawlers started successfully!");
       return refetchHistory();
     })
     .catch(catchPromiseError(toast, CRAWLERS_START_ERROR_MESSAGE));
 
 const startOne = (source: string) =>
-  fetch(`/admin/crawl/${encodeURIComponent(source)}`, { method: "POST" })
-    .then(async (response) => {
-      if (!response.ok) {
-        const message = await response.text();
-        throw new Error(message || CRAWLER_START_ERROR_MESSAGE);
-      }
+  triggerSourceCrawl(encodeURIComponent(source))
+    .then(() => {
       showSuccessToast(toast, `Crawler started: ${source}`);
       return refetchHistory();
     })
@@ -81,7 +76,7 @@ const {
   isFetching,
   error: historyError,
   execute: refetchHistory,
-} = usePagination("/admin/crawl", CrawlJobSchema, { sorting });
+} = usePagination(getListCrawlJobsUrl, CrawlJobSchema, { sorting });
 const jobs = ref<CrawlJob[]>([]);
 const hasRunningJobs = computed(() => jobs.value.some((j) => j.status === "RUNNING"));
 

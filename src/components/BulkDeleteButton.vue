@@ -1,17 +1,15 @@
-<script setup lang="ts" generic="T">
+<script setup lang="ts" generic="T, K extends string | number">
 import { storeToRefs } from "pinia";
 import { computed, ref } from "vue";
 
-import { useAuthedFetch } from "@/composables/useFetch";
 import { useApiStatusStore } from "@/stores/apiStatus";
 import { catchPromiseError, showSuccessToast } from "@/utils";
 
 const props = defineProps<{
   items: T[];
-  getKey: (item: T) => string | number;
+  getKey: (item: T) => K;
   getLabel: (item: T) => string;
-  endpoint: string;
-  bodyKey: string;
+  onDelete: (keys: K[]) => Promise<unknown>;
 }>();
 const emit = defineEmits<{ (e: "deleted"): void | Promise<void> }>();
 
@@ -19,7 +17,6 @@ const deleteOpen = ref(false);
 const deleting = ref(false);
 
 const toast = useToast();
-const fetch = useAuthedFetch();
 const { isOnline } = storeToRefs(useApiStatusStore());
 
 const selectedCount = computed(() => props.items.length);
@@ -47,18 +44,10 @@ const deleteItems = () => {
 
   deleting.value = true;
 
-  return fetch(props.endpoint, {
-    method: "DELETE",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ [props.bodyKey]: selectedKeys.value }),
-  })
-    .then(async (response) => {
-      if (!response.ok) {
-        const message = await response.text();
-        throw new Error(message || deleteErrorMessage);
-      }
-
-      await emit("deleted");
+  return props
+    .onDelete(selectedKeys.value)
+    .then(() => emit("deleted"))
+    .then(() => {
       deleteOpen.value = false;
       showSuccessToast(toast, `${count === 1 ? "Book" : `${count} books`} deleted successfully!`);
     })

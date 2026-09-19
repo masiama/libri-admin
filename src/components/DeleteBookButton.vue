@@ -2,7 +2,7 @@
 import { storeToRefs } from "pinia";
 import { ref } from "vue";
 
-import { useAuthedFetch } from "@/composables/useFetch";
+import { deleteBook as apiDeleteBook } from "@/generated/api/endpoints";
 import { useApiStatusStore } from "@/stores/apiStatus";
 import { catchPromiseError, showSuccessToast } from "@/utils";
 import type { Book } from "@/utils/types";
@@ -15,7 +15,6 @@ const emit = defineEmits<{ (e: "refetchBooks"): Promise<void> }>();
 const deleteOpen = ref(false);
 
 const toast = useToast();
-const fetch = useAuthedFetch();
 const { isOnline } = storeToRefs(useApiStatusStore());
 
 const closeDelete = () => {
@@ -23,15 +22,8 @@ const closeDelete = () => {
 };
 
 const deleteBook = () =>
-  fetch(`/admin/books/${props.book.isbn}`, { method: "DELETE" })
-    .then(async (response) => {
-      if (!response.ok) {
-        const message = await response.text();
-        throw new Error(message || BOOK_DELETE_ERROR_MESSAGE);
-      }
-
-      return emit("refetchBooks");
-    })
+  apiDeleteBook(props.book.isbn)
+    .then(() => emit("refetchBooks"))
     .then(() => {
       deleteOpen.value = false;
       showSuccessToast(toast, "Book deleted successfully!");
