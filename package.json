@@ -17,7 +17,7 @@
   },
   "dependencies": {
     "@clerk/vue": "^2.5.3",
-    "@nuxt/ui": "^4.11.1",
+    "@nuxt/ui": "^4.11.2",
     "@sentry/vue": "^10.75.0",
     "@tanstack/table-core": "^8.21.3",
     "@vueuse/core": "^15.0.0",
