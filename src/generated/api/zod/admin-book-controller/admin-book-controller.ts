@@ -12,37 +12,33 @@ export const UpdateBookParams = zod.object({
 
 export const UpdateBookBody = zod.object({
   book: zod.object({
-    isbn: zod.string().optional(),
-    title: zod.string().optional(),
-    authors: zod.array(zod.string()).optional(),
-    url: zod.string().optional(),
-    sourceName: zod.string().optional(),
-    barcodes: zod
-      .array(
-        zod.object({
-          value: zod.string().optional(),
-          type: zod.string().optional(),
-        }),
-      )
-      .optional(),
+    isbn: zod.string(),
+    title: zod.string(),
+    authors: zod.array(zod.string()),
+    url: zod.string(),
+    sourceName: zod.string(),
+    barcodes: zod.array(
+      zod.object({
+        value: zod.string(),
+        type: zod.string(),
+      }),
+    ),
   }),
   file: zod.instanceof(Blob).optional(),
 });
 
 export const UpdateBookResponse = zod.object({
-  isbn: zod.string().optional(),
-  title: zod.string().optional(),
-  authors: zod.array(zod.string()).optional(),
-  url: zod.string().optional(),
-  sourceName: zod.string().optional(),
-  barcodes: zod
-    .array(
-      zod.object({
-        value: zod.string().optional(),
-        type: zod.string().optional(),
-      }),
-    )
-    .optional(),
+  isbn: zod.string(),
+  title: zod.string(),
+  authors: zod.array(zod.string()),
+  url: zod.string(),
+  sourceName: zod.string(),
+  barcodes: zod.array(
+    zod.object({
+      value: zod.string(),
+      type: zod.string(),
+    }),
+  ),
 });
 
 export const DeleteBookParams = zod.object({
@@ -53,41 +49,37 @@ export const DeleteBookResponse = zod.void();
 
 export const CreateBookBody = zod.object({
   book: zod.object({
-    isbn: zod.string().optional(),
-    title: zod.string().optional(),
-    authors: zod.array(zod.string()).optional(),
-    url: zod.string().optional(),
-    sourceName: zod.string().optional(),
-    barcodes: zod
-      .array(
-        zod.object({
-          value: zod.string().optional(),
-          type: zod.string().optional(),
-        }),
-      )
-      .optional(),
+    isbn: zod.string(),
+    title: zod.string(),
+    authors: zod.array(zod.string()),
+    url: zod.string(),
+    sourceName: zod.string(),
+    barcodes: zod.array(
+      zod.object({
+        value: zod.string(),
+        type: zod.string(),
+      }),
+    ),
   }),
   file: zod.instanceof(Blob),
 });
 
 export const CreateBookResponse = zod.object({
-  isbn: zod.string().optional(),
-  title: zod.string().optional(),
-  authors: zod.array(zod.string()).optional(),
-  url: zod.string().optional(),
-  sourceName: zod.string().optional(),
-  barcodes: zod
-    .array(
-      zod.object({
-        value: zod.string().optional(),
-        type: zod.string().optional(),
-      }),
-    )
-    .optional(),
+  isbn: zod.string(),
+  title: zod.string(),
+  authors: zod.array(zod.string()),
+  url: zod.string(),
+  sourceName: zod.string(),
+  barcodes: zod.array(
+    zod.object({
+      value: zod.string(),
+      type: zod.string(),
+    }),
+  ),
 });
 
 export const DeleteBooksBulkBody = zod.object({
-  isbns: zod.array(zod.string()).optional(),
+  isbns: zod.array(zod.string()),
 });
 
 export const DeleteBooksBulkResponse = zod.void();

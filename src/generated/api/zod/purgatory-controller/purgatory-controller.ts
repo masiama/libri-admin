@@ -11,17 +11,17 @@ export const ApprovePurgatoryBookParams = zod.object({
 });
 
 export const ApprovePurgatoryBookBody = zod.object({
-  isbn: zod.string().optional(),
+  isbn: zod.string(),
 });
 
 export const ApprovePurgatoryBookResponse = zod.object({
-  id: zod.int().optional(),
-  invalidIsbn: zod.string().optional(),
-  title: zod.string().optional(),
-  authors: zod.array(zod.string()).optional(),
-  url: zod.string().optional(),
-  sourceName: zod.string().optional(),
-  createdAt: zod.iso.datetime({ offset: true }).optional(),
+  id: zod.int(),
+  invalidIsbn: zod.string(),
+  title: zod.string(),
+  authors: zod.array(zod.string()),
+  url: zod.string(),
+  sourceName: zod.string(),
+  createdAt: zod.iso.datetime({ offset: true }),
 });
 
 export const listPurgatoryBooksQueryPageDefault = 0;
@@ -53,22 +53,22 @@ export const ListPurgatoryBooksResponse = zod.object({
   content: zod
     .array(
       zod.object({
-        id: zod.int().optional(),
-        invalidIsbn: zod.string().optional(),
-        title: zod.string().optional(),
-        authors: zod.array(zod.string()).optional(),
-        url: zod.string().optional(),
-        sourceName: zod.string().optional(),
-        createdAt: zod.iso.datetime({ offset: true }).optional(),
+        id: zod.int(),
+        invalidIsbn: zod.string(),
+        title: zod.string(),
+        authors: zod.array(zod.string()),
+        url: zod.string(),
+        sourceName: zod.string(),
+        createdAt: zod.iso.datetime({ offset: true }),
       }),
     )
     .optional(),
   page: zod
     .object({
-      size: zod.int().optional(),
-      number: zod.int().optional(),
-      totalElements: zod.int().optional(),
-      totalPages: zod.int().optional(),
+      size: zod.int(),
+      number: zod.int(),
+      totalElements: zod.int(),
+      totalPages: zod.int(),
     })
     .optional(),
 });
@@ -80,7 +80,7 @@ export const DeletePurgatoryBookParams = zod.object({
 export const DeletePurgatoryBookResponse = zod.void();
 
 export const DeletePurgatoryBooksBulkBody = zod.object({
-  ids: zod.array(zod.int()).optional(),
+  ids: zod.array(zod.int()),
 });
 
 export const DeletePurgatoryBooksBulkResponse = zod.void();

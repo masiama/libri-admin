@@ -35,28 +35,26 @@ export const ListBooksResponse = zod.object({
   content: zod
     .array(
       zod.object({
-        isbn: zod.string().optional(),
-        title: zod.string().optional(),
-        authors: zod.array(zod.string()).optional(),
-        url: zod.string().optional(),
-        sourceName: zod.string().optional(),
-        barcodes: zod
-          .array(
-            zod.object({
-              value: zod.string().optional(),
-              type: zod.string().optional(),
-            }),
-          )
-          .optional(),
+        isbn: zod.string(),
+        title: zod.string(),
+        authors: zod.array(zod.string()),
+        url: zod.string(),
+        sourceName: zod.string(),
+        barcodes: zod.array(
+          zod.object({
+            value: zod.string(),
+            type: zod.string(),
+          }),
+        ),
       }),
     )
     .optional(),
   page: zod
     .object({
-      size: zod.int().optional(),
-      number: zod.int().optional(),
-      totalElements: zod.int().optional(),
-      totalPages: zod.int().optional(),
+      size: zod.int(),
+      number: zod.int(),
+      totalElements: zod.int(),
+      totalPages: zod.int(),
     })
     .optional(),
 });
@@ -66,17 +64,15 @@ export const GetBookByIsbnParams = zod.object({
 });
 
 export const GetBookByIsbnResponse = zod.object({
-  isbn: zod.string().optional(),
-  title: zod.string().optional(),
-  authors: zod.array(zod.string()).optional(),
-  url: zod.string().optional(),
-  sourceName: zod.string().optional(),
-  barcodes: zod
-    .array(
-      zod.object({
-        value: zod.string().optional(),
-        type: zod.string().optional(),
-      }),
-    )
-    .optional(),
+  isbn: zod.string(),
+  title: zod.string(),
+  authors: zod.array(zod.string()),
+  url: zod.string(),
+  sourceName: zod.string(),
+  barcodes: zod.array(
+    zod.object({
+      value: zod.string(),
+      type: zod.string(),
+    }),
+  ),
 });

@@ -190,7 +190,7 @@ const resetIsbn = (book: PurgatoryBook) => {
         <div class="flex gap-2">
           <ApprovePurgatoryBookButton
             :purgatoryBook="row.original"
-            :isbn="isbns[row.original.id]"
+            :isbn="isbns[row.original.id] ?? row.original.invalidIsbn"
             @refetchPurgatoryBooks="refetchPurgatoryBooksAndClearSelection"
           />
 

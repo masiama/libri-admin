@@ -36,23 +36,23 @@ export const ListCrawlJobsResponse = zod.object({
   content: zod
     .array(
       zod.object({
-        id: zod.int().optional(),
-        sourceName: zod.string().optional(),
-        startedAt: zod.iso.datetime({ offset: true }).optional(),
-        finishedAt: zod.iso.datetime({ offset: true }).nullish(),
-        status: zod.enum(["RUNNING", "SUCCESS", "FAILED", "CANCELLED"]).optional(),
-        booksFound: zod.int().optional(),
-        errorMessage: zod.string().nullish(),
-        errorCount: zod.int().optional(),
+        id: zod.int(),
+        sourceName: zod.string(),
+        startedAt: zod.iso.datetime({ offset: true }),
+        finishedAt: zod.iso.datetime({ offset: true }).nullable(),
+        status: zod.enum(["RUNNING", "SUCCESS", "FAILED", "CANCELLED"]),
+        booksFound: zod.int(),
+        errorMessage: zod.string().nullable(),
+        errorCount: zod.int(),
       }),
     )
     .optional(),
   page: zod
     .object({
-      size: zod.int().optional(),
-      number: zod.int().optional(),
-      totalElements: zod.int().optional(),
-      totalPages: zod.int().optional(),
+      size: zod.int(),
+      number: zod.int(),
+      totalElements: zod.int(),
+      totalPages: zod.int(),
     })
     .optional(),
 });
@@ -103,19 +103,19 @@ export const ListCrawlJobErrorsResponse = zod.object({
   content: zod
     .array(
       zod.object({
-        id: zod.int().optional(),
-        message: zod.string().optional(),
-        url: zod.string().nullish(),
-        occurredAt: zod.iso.datetime({ offset: true }).optional(),
+        id: zod.int(),
+        message: zod.string(),
+        url: zod.string().nullable(),
+        occurredAt: zod.iso.datetime({ offset: true }),
       }),
     )
     .optional(),
   page: zod
     .object({
-      size: zod.int().optional(),
-      number: zod.int().optional(),
-      totalElements: zod.int().optional(),
-      totalPages: zod.int().optional(),
+      size: zod.int(),
+      number: zod.int(),
+      totalElements: zod.int(),
+      totalPages: zod.int(),
     })
     .optional(),
 });

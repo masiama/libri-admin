@@ -1,20 +1,15 @@
 import * as z from "zod";
 
-import { GetBookByIsbnResponse } from "@/generated/api/zod/book-controller/book-controller";
 import {
+  ApprovePurgatoryBookResponse,
+  GetBookByIsbnResponse,
   ListCrawlJobErrorsResponse,
   ListCrawlJobsResponse,
-} from "@/generated/api/zod/crawler-controller/crawler-controller";
-import { ApprovePurgatoryBookResponse } from "@/generated/api/zod/purgatory-controller/purgatory-controller";
-import { ListSourcesResponseItem } from "@/generated/api/zod/source-controller/source-controller";
+} from "@/generated/api/zod";
 
-export const PageMetadataSchema = ListCrawlJobsResponse.shape.page.unwrap().required();
+export const PageMetadataSchema = ListCrawlJobsResponse.shape.page.unwrap();
 
-const SourceSchema = ListSourcesResponseItem.required().strict();
-export type Source = z.infer<typeof SourceSchema>;
-export const SourcesSchema = z.array(SourceSchema);
-
-const BookBarcodeItemSchema = GetBookByIsbnResponse.shape.barcodes.unwrap().element;
+const BookBarcodeItemSchema = GetBookByIsbnResponse.shape.barcodes.unwrap();
 
 export const BarcodeSchema = BookBarcodeItemSchema.extend({
   value: z.string().nonempty("Barcode value is required"),
@@ -33,14 +28,15 @@ export type Book = z.infer<typeof BookSchema>;
 
 const CrawlJobItemSchema = ListCrawlJobsResponse.shape.content.unwrap().element;
 
-export const CrawlJobSchema = CrawlJobItemSchema.required()
-  .extend({ startedAt: z.coerce.date(), finishedAt: z.coerce.date().nullable() })
-  .strict();
+export const CrawlJobSchema = CrawlJobItemSchema.extend({
+  startedAt: z.coerce.date(),
+  finishedAt: z.coerce.date().nullable(),
+}).strict();
 export type CrawlJob = z.infer<typeof CrawlJobSchema>;
 
-export const PurgatoryBookSchema = ApprovePurgatoryBookResponse.required()
-  .extend({ createdAt: z.coerce.date() })
-  .strict();
+export const PurgatoryBookSchema = ApprovePurgatoryBookResponse.extend({
+  createdAt: z.coerce.date(),
+}).strict();
 export type PurgatoryBook = z.infer<typeof PurgatoryBookSchema>;
 
 export const ProgressEventSchema = CrawlJobSchema.pick({ id: true, booksFound: true }).strict();
@@ -48,7 +44,7 @@ export type ProgressEvent = z.infer<typeof ProgressEventSchema>;
 
 const CrawlJobErrorItemSchema = ListCrawlJobErrorsResponse.shape.content.unwrap().element;
 
-export const CrawlJobErrorSchema = CrawlJobErrorItemSchema.required()
-  .extend({ occurredAt: z.coerce.date() })
-  .strict();
+export const CrawlJobErrorSchema = CrawlJobErrorItemSchema.extend({
+  occurredAt: z.coerce.date(),
+}).strict();
 export type CrawlJobError = z.infer<typeof CrawlJobErrorSchema>;

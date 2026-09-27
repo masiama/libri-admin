@@ -5,7 +5,6 @@ import { onMounted } from "vue";
 import { listSources } from "@/generated/api/endpoints";
 import { useSourcesStore } from "@/stores/sources";
 import { showErrorToast } from "@/utils";
-import { SourcesSchema } from "@/utils/types";
 
 const ERROR_MESSAGE = "An error occurred while fetching sources.";
 
@@ -21,7 +20,7 @@ export const useLoadSources = () => {
     if (!isSignedIn.value) return;
 
     try {
-      store.sources = SourcesSchema.parse(await listSources());
+      store.sources = await listSources();
     } catch (e) {
       showErrorToast(toast, e instanceof Error ? e.message : ERROR_MESSAGE);
     }

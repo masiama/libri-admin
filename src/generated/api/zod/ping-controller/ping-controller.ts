@@ -7,6 +7,6 @@
 import * as zod from "zod";
 
 export const PingResponse = zod.object({
-  status: zod.string().optional(),
-  version: zod.string().optional(),
+  status: zod.string(),
+  version: zod.string(),
 });

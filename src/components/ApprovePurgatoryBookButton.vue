@@ -10,7 +10,7 @@ import type { PurgatoryBook } from "@/utils/types";
 const PURGATORY_BOOK_APPROVE_ERROR_MESSAGE =
   "An error occurred while approving the purgatory book.";
 
-const props = defineProps<{ purgatoryBook: PurgatoryBook; isbn: string | undefined }>();
+const props = defineProps<{ purgatoryBook: PurgatoryBook; isbn: string }>();
 const emit = defineEmits<{ (e: "refetchPurgatoryBooks"): Promise<void> }>();
 
 const approveOpen = ref(false);

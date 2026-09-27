@@ -7,7 +7,7 @@
 import * as zod from "zod";
 
 export const ListSourcesResponseItem = zod.object({
-  name: zod.string().optional(),
-  enabled: zod.boolean().optional(),
+  name: zod.string(),
+  enabled: zod.boolean(),
 });
 export const ListSourcesResponse = zod.array(ListSourcesResponseItem);

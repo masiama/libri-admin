@@ -1,9 +1,9 @@
 import { defineStore } from "pinia";
 
-import type { Source } from "@/utils/types";
+import type { SourceDTO } from "@/generated/api/models";
 
 type SourcesState = {
-  sources: Source[];
+  sources: SourceDTO[];
 };
 
 export const useSourcesStore = defineStore("sources", {
