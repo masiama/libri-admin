@@ -64,6 +64,9 @@ pinia.use(({ store }) => {
 app
   .use(ui)
   .use(pinia)
-  .use(clerkPlugin, { publishableKey: PUBLISHABLE_KEY })
+  .use(clerkPlugin, {
+    publishableKey: PUBLISHABLE_KEY,
+    appearance: { elements: { footerAction: { display: "none" } } },
+  })
   .use(router)
   .mount("#app");
