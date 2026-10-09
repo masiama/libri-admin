@@ -10,4 +10,10 @@ export const GetImageParams = zod.object({
   isbn: zod.string(),
 });
 
+export const getImageQuerySideDefault = `front`;
+
+export const GetImageQueryParams = zod.object({
+  side: zod.string().default(getImageQuerySideDefault),
+});
+
 export const GetImageResponse = zod.unknown();

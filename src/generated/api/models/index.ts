@@ -12,6 +12,7 @@ export * from "./crawlJobDTO";
 export * from "./crawlJobDTOStatus";
 export * from "./crawlJobErrorDTO";
 export * from "./createBookBody";
+export * from "./getImageParams";
 export * from "./listBooksParams";
 export * from "./listCrawlJobErrorsParams";
 export * from "./listCrawlJobsParams";
