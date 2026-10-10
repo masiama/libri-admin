@@ -9,8 +9,14 @@ import Logo from "@/assets/logo.svg?component";
 import { useApiStatusStore } from "@/stores/apiStatus";
 
 const { isSignedIn } = useAuth();
-const { status } = storeToRefs(useApiStatusStore());
+const { status, crawlerStatus, crawlerVersion } = storeToRefs(useApiStatusStore());
 const route = useRoute();
+
+const statusColor = {
+  online: "bg-success",
+  offline: "bg-error",
+  checking: "bg-warning",
+} as const;
 
 const items = computed<NavigationMenuItem[]>(() => [
   { label: "Books", to: "/", active: route.path === "/" },
@@ -25,14 +31,12 @@ const items = computed<NavigationMenuItem[]>(() => [
       <div class="flex items-center gap-2" aria-label="Libri Admin">
         <Logo class="text-primary h-6 w-6" />
         <span class="text-lg font-semibold">Libri Admin</span>
-        <span
-          :class="{
-            'bg-success': status === 'online',
-            'bg-error': status === 'offline',
-            'bg-warning': status === 'checking',
-          }"
-          class="inline-block h-2 w-2 rounded-full"
-        />
+        <UTooltip text="API">
+          <span :class="statusColor[status]" class="inline-block h-2 w-2 rounded-full" />
+        </UTooltip>
+        <UTooltip :text="crawlerVersion ? `Crawler ${crawlerVersion}` : 'Crawler'">
+          <span :class="statusColor[crawlerStatus]" class="inline-block h-2 w-2 rounded-full" />
+        </UTooltip>
       </div>
 
       <UNavigationMenu :items="items" class="grow" />

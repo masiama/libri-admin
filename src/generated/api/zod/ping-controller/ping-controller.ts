@@ -9,4 +9,8 @@ import * as zod from "zod";
 export const PingResponse = zod.object({
   status: zod.string(),
   version: zod.string(),
+  crawler: zod.object({
+    status: zod.enum(["online", "offline"]),
+    version: zod.string().nullable(),
+  }),
 });
