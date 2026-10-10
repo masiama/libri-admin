@@ -19,7 +19,7 @@
     "@clerk/vue": "^2.5.9",
     "@nuxt/ui": "^4.11.3",
     "@sentry/vue": "^11.2.0",
-    "@tanstack/table-core": "^8.21.3",
+    "@tanstack/table-core": "^9.2.6",
     "@vueuse/core": "^15.0.0",
     "pinia": "^4.0.3",
     "tailwindcss": "^4.3.3",
