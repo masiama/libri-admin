@@ -23,6 +23,8 @@ export * from "./pagedModelCrawlJobErrorDTO";
 export * from "./pagedModelPurgatoryBookDTO";
 export * from "./pageMetadata";
 export * from "./pingResponse";
+export * from "./problemDetail";
+export * from "./problemDetailProperties";
 export * from "./purgatoryApproveRequest";
 export * from "./purgatoryBookDTO";
 export * from "./purgatoryBulkDeleteRequest";
