@@ -1,5 +1,6 @@
 import { getToken } from "@clerk/vue";
 import * as Sentry from "@sentry/vue";
+import * as z from "zod";
 
 import { env } from "@/config";
 
@@ -10,6 +11,20 @@ type FetchArgs = {
   body?: BodyType<unknown>;
   responseType?: string;
   headers?: HeadersInit;
+};
+
+// Spring returns RFC 9457 problem details; never show the raw body
+const ProblemDetailSchema = z.object({
+  title: z.string().optional(),
+  detail: z.string().optional(),
+});
+
+const readErrorMessage = async (response: Response) => {
+  const problem = ProblemDetailSchema.safeParse(await response.json().catch(() => null));
+  return (
+    (problem.success && (problem.data.detail || problem.data.title)) ||
+    `Request failed (${response.status})`
+  );
 };
 
 export const customFetch = async <T>(
@@ -43,8 +58,7 @@ export const customFetch = async <T>(
       level: "error",
       extra: { status: response.status, url },
     });
-    const message = await response.text().catch(() => "");
-    throw new Error(message || `Request failed with status ${response.status}`);
+    throw new Error(await readErrorMessage(response));
   }
 
   if ([204, 205, 304].includes(response.status)) return undefined as T;
