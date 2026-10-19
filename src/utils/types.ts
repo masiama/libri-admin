@@ -31,6 +31,7 @@ const CrawlJobItemSchema = ListCrawlJobsResponse.shape.content.unwrap().element;
 export const CrawlJobSchema = CrawlJobItemSchema.extend({
   startedAt: z.coerce.date(),
   finishedAt: z.coerce.date().nullable(),
+  estimatedDurationMs: z.number().nullish(),
 }).strict();
 export type CrawlJob = z.infer<typeof CrawlJobSchema>;
 
@@ -39,7 +40,11 @@ export const PurgatoryBookSchema = ApprovePurgatoryBookResponse.extend({
 }).strict();
 export type PurgatoryBook = z.infer<typeof PurgatoryBookSchema>;
 
-export const ProgressEventSchema = CrawlJobSchema.pick({ id: true, booksFound: true }).strict();
+export const ProgressEventSchema = CrawlJobSchema.pick({
+  id: true,
+  booksFound: true,
+  estimatedDurationMs: true,
+}).strict();
 export type ProgressEvent = z.infer<typeof ProgressEventSchema>;
 
 const CrawlJobErrorItemSchema = ListCrawlJobErrorsResponse.shape.content.unwrap().element;

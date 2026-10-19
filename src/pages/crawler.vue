@@ -109,8 +109,8 @@ onJobUpdated((job) => {
   updateJobInList(job.id, (item) => Object.assign(item, job));
   syncWakeLock();
 });
-onJobProgress(({ id, booksFound }) => {
-  updateJobInList(id, (item) => (item.booksFound = booksFound));
+onJobProgress(({ id, ...data }) => {
+  updateJobInList(id, (item) => Object.assign(item, data));
   syncWakeLock();
 });
 onError((error) => Sentry.captureException(error, { tags: { context: "crawlJobEvents" } }));
@@ -248,6 +248,18 @@ const expandRow = (_: Event, row: Row<CrawlJob>) =>
       <template #finishedAt-cell="{ row }">
         <span v-if="row.original.finishedAt">
           {{ formatDate(row.original.finishedAt, "HH:mm:ss DD.MM.YYYY") }}
+        </span>
+        <span
+          v-else-if="row.original.status === 'RUNNING' && row.original.estimatedDurationMs"
+          class="text-neutral"
+          title="Estimated"
+        >
+          {{
+            formatDate(
+              new Date(row.original.startedAt.getTime() + row.original.estimatedDurationMs),
+              "HH:mm:ss DD.MM.YYYY",
+            )
+          }}
         </span>
         <UIcon v-else name="i-lucide-minus" class="text-muted mx-auto" />
       </template>
