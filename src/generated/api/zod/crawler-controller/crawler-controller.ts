@@ -33,28 +33,24 @@ export const ListCrawlJobsQueryParams = zod.object({
 });
 
 export const ListCrawlJobsResponse = zod.object({
-  content: zod
-    .array(
-      zod.object({
-        id: zod.int(),
-        sourceName: zod.string(),
-        startedAt: zod.iso.datetime({ offset: true }),
-        finishedAt: zod.iso.datetime({ offset: true }).nullable(),
-        status: zod.enum(["RUNNING", "SUCCESS", "FAILED", "CANCELLED"]),
-        booksFound: zod.int(),
-        errorMessage: zod.string().nullable(),
-        errorCount: zod.int(),
-      }),
-    )
-    .optional(),
-  page: zod
-    .object({
-      size: zod.int(),
-      number: zod.int(),
-      totalElements: zod.int(),
-      totalPages: zod.int(),
-    })
-    .optional(),
+  content: zod.array(
+    zod.object({
+      id: zod.int(),
+      sourceName: zod.string(),
+      startedAt: zod.iso.datetime({ offset: true }),
+      finishedAt: zod.iso.datetime({ offset: true }).nullable(),
+      status: zod.enum(["RUNNING", "SUCCESS", "FAILED", "CANCELLED"]),
+      booksFound: zod.int(),
+      errorMessage: zod.string().nullable(),
+      errorCount: zod.int(),
+    }),
+  ),
+  page: zod.object({
+    size: zod.int(),
+    number: zod.int(),
+    totalElements: zod.int(),
+    totalPages: zod.int(),
+  }),
 });
 
 export const TriggerAllCrawlsResponse = zod.string();
@@ -100,22 +96,18 @@ export const ListCrawlJobErrorsQueryParams = zod.object({
 });
 
 export const ListCrawlJobErrorsResponse = zod.object({
-  content: zod
-    .array(
-      zod.object({
-        id: zod.int(),
-        message: zod.string(),
-        url: zod.string().nullable(),
-        occurredAt: zod.iso.datetime({ offset: true }),
-      }),
-    )
-    .optional(),
-  page: zod
-    .object({
-      size: zod.int(),
-      number: zod.int(),
-      totalElements: zod.int(),
-      totalPages: zod.int(),
-    })
-    .optional(),
+  content: zod.array(
+    zod.object({
+      id: zod.int(),
+      message: zod.string(),
+      url: zod.string().nullable(),
+      occurredAt: zod.iso.datetime({ offset: true }),
+    }),
+  ),
+  page: zod.object({
+    size: zod.int(),
+    number: zod.int(),
+    totalElements: zod.int(),
+    totalPages: zod.int(),
+  }),
 });

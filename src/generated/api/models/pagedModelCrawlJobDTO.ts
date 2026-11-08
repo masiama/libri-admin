@@ -8,6 +8,6 @@ import type { CrawlJobDTO } from "./crawlJobDTO";
 import type { PageMetadata } from "./pageMetadata";
 
 export interface PagedModelCrawlJobDTO {
-  content?: CrawlJobDTO[];
-  page?: PageMetadata;
+  content: CrawlJobDTO[];
+  page: PageMetadata;
 }

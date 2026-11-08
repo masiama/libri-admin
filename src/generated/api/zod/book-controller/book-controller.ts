@@ -32,31 +32,27 @@ export const ListBooksQueryParams = zod.object({
 });
 
 export const ListBooksResponse = zod.object({
-  content: zod
-    .array(
-      zod.object({
-        isbn: zod.string(),
-        title: zod.string(),
-        authors: zod.array(zod.string()),
-        url: zod.string(),
-        sourceName: zod.string(),
-        barcodes: zod.array(
-          zod.object({
-            value: zod.string(),
-            type: zod.string(),
-          }),
-        ),
-      }),
-    )
-    .optional(),
-  page: zod
-    .object({
-      size: zod.int(),
-      number: zod.int(),
-      totalElements: zod.int(),
-      totalPages: zod.int(),
-    })
-    .optional(),
+  content: zod.array(
+    zod.object({
+      isbn: zod.string(),
+      title: zod.string(),
+      authors: zod.array(zod.string()),
+      url: zod.string(),
+      sourceName: zod.string(),
+      barcodes: zod.array(
+        zod.object({
+          value: zod.string(),
+          type: zod.string(),
+        }),
+      ),
+    }),
+  ),
+  page: zod.object({
+    size: zod.int(),
+    number: zod.int(),
+    totalElements: zod.int(),
+    totalPages: zod.int(),
+  }),
 });
 
 export const GetBookByIsbnParams = zod.object({

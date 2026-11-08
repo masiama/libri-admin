@@ -7,7 +7,7 @@ import {
   ListCrawlJobsResponse,
 } from "@/generated/api/zod";
 
-export const PageMetadataSchema = ListCrawlJobsResponse.shape.page.unwrap();
+export const PageMetadataSchema = ListCrawlJobsResponse.shape.page;
 
 const BookBarcodeItemSchema = GetBookByIsbnResponse.shape.barcodes.unwrap();
 
@@ -26,13 +26,13 @@ export const BookSchema = GetBookByIsbnResponse.extend({
 }).strict();
 export type Book = z.infer<typeof BookSchema>;
 
-const CrawlJobItemSchema = ListCrawlJobsResponse.shape.content.unwrap().element;
-
-export const CrawlJobSchema = CrawlJobItemSchema.extend({
-  startedAt: z.coerce.date(),
-  finishedAt: z.coerce.date().nullable(),
-  estimatedDurationMs: z.number().nullish(),
-}).strict();
+export const CrawlJobSchema = ListCrawlJobsResponse.shape.content.element
+  .extend({
+    startedAt: z.coerce.date(),
+    finishedAt: z.coerce.date().nullable(),
+    estimatedDurationMs: z.number().nullish(),
+  })
+  .strict();
 export type CrawlJob = z.infer<typeof CrawlJobSchema>;
 
 export const PurgatoryBookSchema = ApprovePurgatoryBookResponse.extend({
@@ -47,9 +47,7 @@ export const ProgressEventSchema = CrawlJobSchema.pick({
 }).strict();
 export type ProgressEvent = z.infer<typeof ProgressEventSchema>;
 
-const CrawlJobErrorItemSchema = ListCrawlJobErrorsResponse.shape.content.unwrap().element;
-
-export const CrawlJobErrorSchema = CrawlJobErrorItemSchema.extend({
-  occurredAt: z.coerce.date(),
-}).strict();
+export const CrawlJobErrorSchema = ListCrawlJobErrorsResponse.shape.content.element
+  .extend({ occurredAt: z.coerce.date() })
+  .strict();
 export type CrawlJobError = z.infer<typeof CrawlJobErrorSchema>;

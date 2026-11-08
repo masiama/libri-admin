@@ -50,27 +50,23 @@ export const ListPurgatoryBooksQueryParams = zod.object({
 });
 
 export const ListPurgatoryBooksResponse = zod.object({
-  content: zod
-    .array(
-      zod.object({
-        id: zod.int(),
-        invalidIsbn: zod.string(),
-        title: zod.string(),
-        authors: zod.array(zod.string()),
-        url: zod.string(),
-        sourceName: zod.string(),
-        createdAt: zod.iso.datetime({ offset: true }),
-      }),
-    )
-    .optional(),
-  page: zod
-    .object({
-      size: zod.int(),
-      number: zod.int(),
-      totalElements: zod.int(),
-      totalPages: zod.int(),
-    })
-    .optional(),
+  content: zod.array(
+    zod.object({
+      id: zod.int(),
+      invalidIsbn: zod.string(),
+      title: zod.string(),
+      authors: zod.array(zod.string()),
+      url: zod.string(),
+      sourceName: zod.string(),
+      createdAt: zod.iso.datetime({ offset: true }),
+    }),
+  ),
+  page: zod.object({
+    size: zod.int(),
+    number: zod.int(),
+    totalElements: zod.int(),
+    totalPages: zod.int(),
+  }),
 });
 
 export const DeletePurgatoryBookParams = zod.object({
