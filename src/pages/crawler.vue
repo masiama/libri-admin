@@ -117,6 +117,9 @@ onError((error) => Sentry.captureException(error, { tags: { context: "crawlJobEv
 
 onUnmounted(() => releaseWakeLock());
 
+const estimatedFinish = (job: CrawlJob) =>
+  new Date(job.startedAt.getTime() + (job.estimatedDurationMs ?? 0));
+
 const columns: TableColumn<CrawlJob>[] = [
   { id: "expand", meta: { class: { th: "w-16", td: "py-0" } } },
   { accessorKey: "startedAt", meta: { class: { th: "w-44" } } },
@@ -252,14 +255,12 @@ const expandRow = (_: Event, row: Row<CrawlJob>) =>
         <span
           v-else-if="row.original.status === 'RUNNING' && row.original.estimatedDurationMs"
           class="text-neutral"
-          title="Estimated"
+          :title="estimatedFinish(row.original) > now ? 'Estimated' : 'Waiting for the last events'"
         >
-          {{
-            formatDate(
-              new Date(row.original.startedAt.getTime() + row.original.estimatedDurationMs),
-              "HH:mm:ss DD.MM.YYYY",
-            )
-          }}
+          <template v-if="estimatedFinish(row.original) > now">
+            {{ formatDate(estimatedFinish(row.original), "HH:mm:ss DD.MM.YYYY") }}
+          </template>
+          <template v-else>Finalizing…</template>
         </span>
         <UIcon v-else name="i-lucide-minus" class="text-muted mx-auto" />
       </template>
