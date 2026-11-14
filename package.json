@@ -33,7 +33,7 @@
     "@types/node": "^26.6.6",
     "@vitejs/plugin-vue": "^6.0.10",
     "@vue/tsconfig": "^0.9.1",
-    "knip": "^6.44.2",
+    "knip": "^6.45.1",
     "orval": "^8.46.0",
     "oxfmt": "^0.77.0",
     "oxlint": "^1.92.0",
